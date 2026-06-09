@@ -1,0 +1,5 @@
+{
+  "name": "Arcade FC",
+  "description": "A fast-paced, web-based arcade soccer game with physics, AI opponents, and dynamic camera system.",
+  "requestFramePermissions": []
+}

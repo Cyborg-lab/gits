@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AIDifficulty, ClubDefinition, FormationKey, GameMode, LeagueKey, ScoreState, StadiumKey, Team } from '../types';
+import { getMatchHistory, MatchRecord } from '../game/matchDatabase';
 
 interface MenuProps {
   onOpenModeSelect: () => void;
-  onSelectMode: (mode: GameMode) => void;
+  onSelectMode: (mode: GameMode, isMultiplayer?: boolean) => void;
   onSelectChampionsLeague: () => void;
+  onSelectNationalLeague: () => void;
   onSelectDifficulty: (difficulty: AIDifficulty) => void;
   selectedDifficulty: AIDifficulty;
   isChoosingMode: boolean;
@@ -51,14 +53,26 @@ interface TeamSelectMenuProps {
   stadiums: Array<{ key: StadiumKey; label: string }>;
   selectedStadium: StadiumKey;
   selectedClubId: string;
+  selectedFormation?: FormationKey;
   onSelectLeague: (league: LeagueKey) => void;
   onSelectClub: (clubId: string) => void;
+  onSelectFormation?: (formation: FormationKey) => void;
   onSelectStadium: (stadium: StadiumKey) => void;
   onBack: () => void;
   onContinue: () => void;
   homeReady: boolean;
   awayReady: boolean;
   canContinue: boolean;
+}
+
+export interface SquadSelectMenuProps {
+  clubName: string;
+  players: { name: string; number: number; role: string }[];
+  lineupIndices: number[];
+  subIndices: number[];
+  onSwap: (lineupIndex: number, subIndex: number) => void;
+  onContinue: () => void;
+  onBack: () => void;
 }
 
 interface PauseMenuProps {
@@ -68,6 +82,7 @@ interface PauseMenuProps {
   awayFormation: FormationKey;
   onSelectFormation: (team: Team, formation: FormationKey) => void;
   onToggleTactics: () => void;
+  onToggleSquad: () => void;
   onContinue: () => void;
   onExit: () => void;
   homeReady: boolean;
@@ -79,15 +94,89 @@ const leagueLabel = (league: LeagueKey) => {
   if (league === LeagueKey.PREMIER_LEAGUE) return 'Premier League';
   if (league === LeagueKey.LIGUE_1) return 'Ligue 1';
   if (league === LeagueKey.SERIE_A) return 'Serie A';
-  return 'Portugal Liga';
+  if (league === LeagueKey.PORTUGAL_LIGA) return 'Portugal Liga';
+  return 'National League';
 };
 
 const FORMATIONS: FormationKey[] = ['1-2-1', '2-1-1', '1-1-2'];
+const FORMATION_LAYOUTS: Record<FormationKey, Array<{ x: number; y: number; role: string }>> = {
+  '1-2-1': [
+    { x: 0.08, y: 0.55, role: 'GK' },
+    { x: 0.28, y: 0.24, role: 'DEF' },
+    { x: 0.28, y: 0.76, role: 'DEF' },
+    { x: 0.52, y: 0.5, role: 'MID' },
+    { x: 0.74, y: 0.26, role: 'FWD' },
+    { x: 0.74, y: 0.74, role: 'FWD' },
+  ],
+  '2-1-1': [
+    { x: 0.08, y: 0.55, role: 'GK' },
+    { x: 0.28, y: 0.18, role: 'DEF' },
+    { x: 0.28, y: 0.82, role: 'DEF' },
+    { x: 0.52, y: 0.5, role: 'MID' },
+    { x: 0.8, y: 0.36, role: 'FWD' },
+    { x: 0.8, y: 0.64, role: 'FWD' },
+  ],
+  '1-1-2': [
+    { x: 0.08, y: 0.55, role: 'GK' },
+    { x: 0.3, y: 0.5, role: 'DEF' },
+    { x: 0.5, y: 0.22, role: 'MID' },
+    { x: 0.5, y: 0.78, role: 'MID' },
+    { x: 0.78, y: 0.28, role: 'FWD' },
+    { x: 0.78, y: 0.72, role: 'FWD' },
+  ],
+};
+
+const FootballFormationBoard: React.FC<{ clubName: string; formation: FormationKey; players: { name: string; number: number; role: string }[]; }> = ({ clubName, formation, players }) => {
+  const layout = FORMATION_LAYOUTS[formation];
+
+  return (
+    <div className="rounded-3xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.2),_rgba(15,23,42,0.95))] p-5 shadow-[0_0_35px_rgba(34,211,238,0.15)]">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.32em] text-cyan-300/75">Football Formation Diagram</div>
+          <div className="mt-1 font-sport text-2xl text-white">{clubName}</div>
+        </div>
+        <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 font-sport text-lg text-cyan-200">{formation}</div>
+      </div>
+
+      <div className="relative h-[280px] overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,_rgba(30,122,57,0.9),_rgba(18,85,43,0.96))]">
+        <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '20% 20%' }} />
+        <div className="absolute inset-x-0 top-1/2 h-px bg-white/40" />
+        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/40" />
+        <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/45" />
+        <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/85" />
+        <div className="absolute inset-y-0 left-0 w-1/4 border-r border-white/40" />
+        <div className="absolute inset-y-0 right-0 w-1/4 border-l border-white/40" />
+
+        {layout.map((slot, index) => {
+          const player = players[index] ?? { name: 'Bench', number: index + 1, role: slot.role };
+          const x = slot.x * 100;
+          const y = slot.y * 100;
+          return (
+            <div
+              key={`${clubName}-${formation}-${index}`}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${x}%`, top: `${y}%` }}
+            >
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-slate-950/85 text-[10px] font-black text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.45)]">
+                  {player.number}
+                </div>
+                <div className="rounded-full border border-white/15 bg-slate-900/75 px-2 py-1 text-[8px] uppercase tracking-[0.2em] text-white/80">{slot.role}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export const MainMenu: React.FC<MenuProps> = ({
   onOpenModeSelect,
   onSelectMode,
   onSelectChampionsLeague,
+  onSelectNationalLeague,
   onSelectDifficulty,
   selectedDifficulty,
   isChoosingMode,
@@ -105,63 +194,244 @@ export const MainMenu: React.FC<MenuProps> = ({
   peerConnected,
   isConnectingLan,
 }) => {
+  const [selectedPrimaryAction, setSelectedPrimaryAction] = useState('play');
+  const [matchHistory, setMatchHistory] = useState<MatchRecord[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    getMatchHistory().then(records => { if (active) setMatchHistory(records); });
+    return () => { active = false; };
+  }, []);
+  const featuredMatch = matchHistory[0];
+
+  const primaryActions = [
+    { key: 'play', label: 'PLAY', subtitle: 'Select mode', accent: 'cyan', action: onOpenModeSelect },
+    { key: 'kickoff', label: 'KICK OFF', subtitle: 'Instant match', accent: 'amber', action: () => onSelectMode(GameMode.SINGLE_PLAYER) },
+    { key: 'tournament', label: 'TOURNAMENT', subtitle: 'Champions League', accent: 'violet', action: onSelectChampionsLeague },
+    { key: 'teams', label: 'TEAMS', subtitle: 'Clubs & nations', accent: 'emerald', action: onOpenModeSelect },
+    { key: 'lan', label: 'LOCAL WIFI', subtitle: 'Host or join', accent: 'blue', action: onOpenLanMenu },
+  ];
+
+  const accentMap: Record<string, { edge: string; glow: string; panel: string; title: string; chip: string }> = {
+    cyan: {
+      edge: 'from-cyan-300 via-sky-300 to-cyan-500',
+      glow: 'shadow-[0_0_35px_rgba(34,211,238,0.2)]',
+      panel: 'border-cyan-400/35 bg-[linear-gradient(135deg,rgba(10,20,35,0.92),rgba(20,31,52,0.75))]',
+      title: 'text-cyan-200',
+      chip: 'bg-cyan-400/15 text-cyan-100 border-cyan-300/35',
+    },
+    amber: {
+      edge: 'from-amber-300 via-yellow-200 to-orange-500',
+      glow: 'shadow-[0_0_35px_rgba(251,191,36,0.2)]',
+      panel: 'border-amber-400/30 bg-[linear-gradient(135deg,rgba(27,18,8,0.94),rgba(32,24,10,0.72))]',
+      title: 'text-amber-100',
+      chip: 'bg-amber-400/15 text-amber-100 border-amber-300/35',
+    },
+    violet: {
+      edge: 'from-violet-300 via-fuchsia-300 to-purple-500',
+      glow: 'shadow-[0_0_35px_rgba(168,85,247,0.2)]',
+      panel: 'border-violet-400/30 bg-[linear-gradient(135deg,rgba(23,12,35,0.94),rgba(30,17,52,0.72))]',
+      title: 'text-violet-100',
+      chip: 'bg-violet-400/15 text-violet-100 border-violet-300/35',
+    },
+    emerald: {
+      edge: 'from-emerald-300 via-green-300 to-emerald-500',
+      glow: 'shadow-[0_0_35px_rgba(16,185,129,0.2)]',
+      panel: 'border-emerald-400/30 bg-[linear-gradient(135deg,rgba(8,26,19,0.94),rgba(18,34,30,0.72))]',
+      title: 'text-emerald-100',
+      chip: 'bg-emerald-400/15 text-emerald-100 border-emerald-300/35',
+    },
+    blue: {
+      edge: 'from-blue-300 via-sky-300 to-blue-500',
+      glow: 'shadow-[0_0_35px_rgba(59,130,246,0.2)]',
+      panel: 'border-blue-400/30 bg-[linear-gradient(135deg,rgba(9,18,33,0.94),rgba(17,28,52,0.72))]',
+      title: 'text-blue-100',
+      chip: 'bg-blue-400/15 text-blue-100 border-blue-300/35',
+    },
+  };
+
   return (
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-sky-950 to-black flex flex-col items-center justify-center z-50 text-white overflow-hidden">
-      <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-600 rounded-full blur-[150px] opacity-40"></div>
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-600 rounded-full blur-[150px] opacity-30"></div>
+    <div className="absolute inset-0 z-50 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(20,35,58,0.95),_rgba(2,6,23,1)_52%)] text-white">
+      <div className="menu-stadium-lights pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="menu-light-beam menu-light-beam-left" />
+        <div className="menu-light-beam menu-light-beam-right" />
+        <div className="menu-stadium-crowd" />
+        <div className="menu-stadium-pitch" />
+      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(56,189,248,0.12),transparent_28%),linear-gradient(180deg,rgba(2,6,23,0.2),rgba(2,6,23,0.8))]" />
+      <div className="absolute -top-40 -left-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-[120px]" />
+      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-violet-500/20 blur-[120px]" />
 
-      <div className="z-10 flex flex-col items-center">
-        <h1 className="text-8xl font-sport font-bold mb-2 tracking-tighter italic text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500">
-          ARCADE FC
-        </h1>
-        <p className="mb-12 text-cyan-100/60 font-sport tracking-[0.45em] text-sm uppercase">Street Style Football</p>
+      <div className="relative z-10 w-[min(1200px,92vw)] rounded-[30px] border border-white/10 bg-slate-950/35 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.7)] backdrop-blur-xl">
+        <div className="flex items-center justify-between px-4 pb-4 pt-2">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-500/10 font-sport text-sm text-cyan-200">FC</div>
+            <div>
+              <div className="text-[0.62rem] uppercase tracking-[0.5em] text-cyan-200/80">FIFA 2026</div>
+              <div className="font-sport text-2xl tracking-tight text-white">ARCADE FC</div>
+            </div>
+          </div>
 
-        <div className="flex gap-8">
-          <button
-            onClick={onOpenModeSelect}
-            className="group relative w-64 h-40 glass-panel skew-x-[-10deg] hover:bg-white/10 transition-all duration-300 transform hover:scale-105 cursor-pointer flex flex-col items-center justify-center overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 w-2 h-full bg-cyan-500"></div>
-            <span className="skew-x-[10deg] text-3xl font-sport font-bold mb-1 group-hover:text-cyan-400 transition-colors">KICK OFF</span>
-            <span className="skew-x-[10deg] text-xs text-gray-400 uppercase tracking-widest">Start Match</span>
-          </button>
-
-          <button
-            onClick={onOpenLanMenu}
-            className="group relative w-64 h-40 glass-panel skew-x-[-10deg] hover:bg-white/10 transition-all duration-300 transform hover:scale-105 cursor-pointer flex flex-col items-center justify-center overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
-            <span className="skew-x-[10deg] text-3xl font-sport font-bold mb-1 group-hover:text-blue-300 transition-colors">LOCAL WIFI</span>
-            <span className="skew-x-[10deg] text-xs text-gray-400 uppercase tracking-widest">Host Or Join LAN</span>
-          </button>
+          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.58rem] uppercase tracking-[0.38em] text-white/70">
+            LIVE MODE
+          </div>
         </div>
 
-        <div className="mt-10 w-[min(94vw,900px)] rounded-3xl border border-white/10 bg-black/25 p-6 text-left shadow-2xl">
-          <div className="text-sm font-sport uppercase tracking-[0.35em] text-cyan-300">How To Play</div>
-          <div className="mt-4 grid gap-4 md:grid-cols-3 text-sm text-white/75">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="font-sport text-lg text-white">P1 Controls</div>
-              <div className="mt-2">Move: `WASD`</div>
-              <div>Pass: `Q`</div>
-              <div>Shoot: `E`</div>
-              <div>Switch: `R`</div>
-              <div>Sprint: `Left Shift`</div>
+        <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
+          <aside className="rounded-[28px] border border-white/10 bg-slate-950/40 p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="text-[0.6rem] uppercase tracking-[0.42em] text-slate-300/80">Main Menu</div>
+              <div className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[0.5rem] uppercase tracking-[0.28em] text-slate-200/70">01</div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="font-sport text-lg text-white">P2 Controls</div>
-              <div className="mt-2">Move: `IJKL`</div>
-              <div>Pass: `U`</div>
-              <div>Shoot: `O`</div>
-              <div>Sprint: `Right Shift`</div>
+
+            <div className="space-y-3">
+              {primaryActions.map(({ key, label, subtitle, accent, action }) => {
+                const styles = accentMap[accent];
+                const isSelected = selectedPrimaryAction === key;
+
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onMouseEnter={() => setSelectedPrimaryAction(key)}
+                    onFocus={() => setSelectedPrimaryAction(key)}
+                    onClick={() => {
+                      setSelectedPrimaryAction(key);
+                      action();
+                    }}
+                    className={`group relative block w-full overflow-hidden rounded-[22px] border p-0 text-left transition-all duration-300 ${isSelected ? `translate-x-1 ${styles.glow} ${styles.panel}` : 'border-white/10 bg-slate-900/30 hover:border-white/20 hover:bg-slate-900/45'} ${isSelected ? 'scale-[1.01]' : ''}`}
+                  >
+                    <div className={`absolute inset-y-0 left-0 w-[5px] bg-gradient-to-b ${styles.edge}`} />
+                    <div className="relative flex items-center justify-between gap-3 px-4 py-4">
+                      <div className="min-w-0">
+                        <div className={`font-sport text-[1.5rem] uppercase ${isSelected ? styles.title : 'text-white'}`}>{label}</div>
+                        <div className="mt-1 text-[0.55rem] uppercase tracking-[0.3em] text-slate-300/75">{subtitle}</div>
+                      </div>
+                      <div className={`rounded-full border px-2 py-1 text-[0.5rem] uppercase tracking-[0.25em] ${isSelected ? styles.chip : 'border-white/10 bg-white/5 text-slate-200/70'}`}>
+                        {isSelected ? 'ON' : 'GO'}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="font-sport text-lg text-white">Modes</div>
-              <div className="mt-2">Kick Off: quick match</div>
-              <div>Local WiFi: host and guest</div>
-              <div>Champions League: qualification, groups and knockouts</div>
-              <div>Pause: `Esc` for tactics</div>
+
+            <div className="mt-5 rounded-[22px] border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950/60 p-4">
+              <div className="text-[0.55rem] uppercase tracking-[0.42em] text-white/60">Quick Info</div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-200/80">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Mode</div>
+                  <div className="mt-2 font-sport text-lg text-white">Quick</div>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Teams</div>
+                  <div className="mt-2 font-sport text-lg text-white">World</div>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Match</div>
+                  <div className="mt-2 font-sport text-lg text-white">90min</div>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Style</div>
+                  <div className="mt-2 font-sport text-lg text-white">FC26</div>
+                </div>
+              </div>
             </div>
+          </aside>
+
+          <section className="relative overflow-hidden rounded-[30px] border border-cyan-400/20 bg-[linear-gradient(135deg,rgba(4,12,24,0.9),rgba(7,19,38,0.78))] p-5">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.18),transparent_33%),radial-gradient(circle_at_bottom,_rgba(13,148,136,0.12),transparent_28%)]" />
+            <div className="relative flex h-full flex-col">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-[0.6rem] uppercase tracking-[0.42em] text-cyan-200/80">Match History</div>
+                  <div className="mt-1 font-sport text-4xl text-white">RECENT RESULTS</div>
+                </div>
+                <div className="rounded-full border border-cyan-300/40 bg-cyan-500/10 px-3 py-1 text-[0.5rem] uppercase tracking-[0.38em] text-cyan-100">{matchHistory.length} PLAYED</div>
+              </div>
+
+              <div className="relative flex-1 overflow-hidden rounded-[26px] border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(20,83,45,0.8),rgba(8,15,24,0.95))] p-5">
+                <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cyan-300/10 to-transparent" />
+                <div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+
+                <div className="relative grid h-full gap-4 md:grid-cols-[1.2fr_0.8fr]">
+                  <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/20 p-4">
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,24,39,0.2),rgba(17,24,39,0.75))]" />
+                    <div className="relative flex h-full flex-col justify-between">
+                      <div className="flex items-center justify-between text-[0.52rem] uppercase tracking-[0.32em] text-slate-200/80">
+                        <span>{featuredMatch ? new Date(featuredMatch.playedAt).toLocaleString() : 'MATCH HISTORY'}</span>
+                        <span>{featuredMatch?.stadium.replaceAll('_', ' ') || 'LOCAL DATABASE'}</span>
+                      </div>
+
+                      <div className="relative mx-auto mt-3 flex w-full max-w-[520px] items-center justify-between rounded-[20px] border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-sm">
+                        <div className="text-left">
+                          <div className="text-[0.5rem] uppercase tracking-[0.34em] text-slate-300">Home</div>
+                          <div className="mt-1 font-sport text-3xl text-white">{featuredMatch?.home || '—'}</div>
+                        </div>
+                        <div className="px-5 text-center">
+                          <div className="text-[0.5rem] uppercase tracking-[0.38em] text-cyan-200">{featuredMatch?.mode.replaceAll('_', ' ') || 'NO MATCHES YET'}</div>
+                          <div className="mt-2 font-sport text-5xl tracking-tight text-white">{featuredMatch ? `${featuredMatch.homeScore} - ${featuredMatch.awayScore}` : '— : —'}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[0.5rem] uppercase tracking-[0.34em] text-slate-300">Away</div>
+                          <div className="mt-1 font-sport text-3xl text-white">{featuredMatch?.away || '—'}</div>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex items-end justify-between gap-3">
+                        <div className="rounded-[18px] border border-cyan-400/30 bg-cyan-500/10 px-4 py-3">
+                          <div className="text-[0.46rem] uppercase tracking-[0.32em] text-cyan-200/80">Matches</div>
+                          <div className="mt-2 font-sport text-3xl text-white">{matchHistory.length}</div>
+                        </div>
+                        <div className="rounded-[18px] border border-white/10 bg-white/5 px-4 py-3">
+                          <div className="text-[0.46rem] uppercase tracking-[0.32em] text-slate-300">Latest</div>
+                          <div className="mt-2 font-sport text-3xl text-white">{featuredMatch ? new Date(featuredMatch.playedAt).toLocaleDateString() : '—'}</div>
+                        </div>
+                        <div className="rounded-[18px] border border-amber-400/30 bg-amber-500/10 px-4 py-3">
+                          <div className="text-[0.46rem] uppercase tracking-[0.32em] text-amber-200/80">Storage</div>
+                          <div className="mt-2 font-sport text-3xl text-white">IndexedDB</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    <div className="min-h-0 flex-1 rounded-[22px] border border-white/10 bg-slate-950/35 p-4">
+                      <div className="text-[0.5rem] uppercase tracking-[0.38em] text-slate-300/80">All Previous Matches</div>
+                      <div className="mt-3 max-h-[300px] space-y-2 overflow-y-auto pr-1">
+                        {matchHistory.length === 0 && <div className="text-sm text-slate-200/60">Завершённые матчи появятся здесь.</div>}
+                        {matchHistory.map(match => (
+                          <div key={match.id} className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+                            <div className="flex items-center justify-between gap-2 text-sm text-white">
+                              <span className="truncate">{match.home}</span>
+                              <span className="text-center font-sport text-xl text-cyan-200">{match.homeScore} : {match.awayScore}{match.shootoutHome !== undefined && <span className="block text-[9px] leading-none text-amber-200">PEN {match.shootoutHome} : {match.shootoutAway}</span>}</span>
+                              <span className="truncate text-right">{match.away}</span>
+                            </div>
+                            <div className="mt-1 text-[10px] text-slate-400">{new Date(match.playedAt).toLocaleString()} · {match.mode.replaceAll('_', ' ')}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className="mt-4 grid gap-3 rounded-[22px] border border-white/10 bg-slate-950/40 p-4 md:grid-cols-3">
+          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3">
+            <div className="text-[0.52rem] uppercase tracking-[0.32em] text-slate-300">P1 Controls</div>
+            <div className="mt-2 text-sm text-slate-200/80">WASD • Q • E • R • F • Shift</div>
+          </div>
+          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3">
+            <div className="text-[0.52rem] uppercase tracking-[0.32em] text-slate-300">P2 Controls</div>
+            <div className="mt-2 text-sm text-slate-200/80">IJKL • U • O • P • ; • Shift</div>
+          </div>
+          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3">
+            <div className="text-[0.52rem] uppercase tracking-[0.32em] text-slate-300">Modes</div>
+            <div className="mt-2 text-sm text-slate-200/80">Kick off • Champions League • LAN • Clubs</div>
           </div>
         </div>
       </div>
@@ -175,8 +445,16 @@ export const MainMenu: React.FC<MenuProps> = ({
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectMode(GameMode.SINGLE_PLAYER)}
+                onKeyDown={event => {
+                  if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+                    event.preventDefault();
+                    onSelectMode(GameMode.SINGLE_PLAYER);
+                  }
+                }}
                 className="text-left rounded-2xl border border-cyan-400/30 bg-cyan-500/10 hover:bg-cyan-500/20 px-5 py-6 transition-all"
               >
                 <div className="font-sport text-2xl text-cyan-300">SMART AI</div>
@@ -198,7 +476,7 @@ export const MainMenu: React.FC<MenuProps> = ({
                     </button>
                   ))}
                 </div>
-              </button>
+              </div>
 
               <button
                 onClick={() => onSelectMode(GameMode.MULTI_PLAYER)}
@@ -210,15 +488,24 @@ export const MainMenu: React.FC<MenuProps> = ({
 
               <button
                 onClick={onSelectChampionsLeague}
-                className="text-left rounded-2xl border border-amber-400/30 bg-amber-500/10 hover:bg-amber-500/20 px-5 py-6 transition-all md:col-span-2"
+                className="text-left rounded-2xl border border-amber-400/30 bg-amber-500/10 hover:bg-amber-500/20 px-5 py-6 transition-all"
               >
                 <div className="font-sport text-2xl text-amber-300">CHAMPIONS LEAGUE</div>
-                <div className="mt-2 text-sm text-white/70">Qualification, group stage, round of 32, round of 16, quarter-final, semi-final and final</div>
+                <div className="mt-2 text-sm text-white/70">Qualification, group stage and knockout rounds</div>
+              </button>
+
+              <button
+                onClick={onSelectNationalLeague}
+                className="text-left rounded-2xl border border-violet-400/30 bg-violet-500/10 hover:bg-violet-500/20 px-5 py-6 transition-all"
+              >
+                <div className="font-sport text-2xl text-violet-300">NATIONAL LEAGUE</div>
+                <div className="mt-2 text-sm text-white/70">World nations from Europe to Oceania and global rivalry</div>
               </button>
             </div>
           </div>
         </div>
       )}
+
 
       {isChoosingLan && (
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-20">
@@ -285,6 +572,125 @@ export const MainMenu: React.FC<MenuProps> = ({
   );
 };
 
+export const SquadSelectMenu: React.FC<SquadSelectMenuProps> = ({
+  clubName,
+  players,
+  lineupIndices,
+  subIndices,
+  onSwap,
+  onContinue,
+  onBack,
+}) => {
+  const [selectedLineupSlot, setSelectedLineupSlot] = useState<number | null>(null);
+
+  const formationPlayers = lineupIndices.map(index => players[index]);
+
+  return (
+    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-lg flex items-center justify-center z-50 text-white">
+      <div className="w-[min(95vw,1200px)] glass-panel rounded-3xl border border-white/10 p-8">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-4xl font-sport text-cyan-300">{clubName} SQUAD</h2>
+            <p className="mt-2 text-sm uppercase tracking-[0.28em] text-white/45">
+              Pick a starter, then choose a reserve to swap in
+            </p>
+          </div>
+          <button onClick={onBack} className="rounded-xl border border-white/15 px-4 py-2 text-sm uppercase tracking-[0.2em] text-white/70 hover:bg-white/10">
+            Back
+          </button>
+        </div>
+
+        <div className="mt-8 grid xl:grid-cols-[1.2fr_0.8fr] gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <div className="text-sm uppercase tracking-[0.28em] text-white/45 mb-4">Starting 6</div>
+              <div className="flex flex-col gap-2">
+                {lineupIndices.map((playerIndex, slotIndex) => (
+                  <button
+                    key={`lineup-${slotIndex}`}
+                    onClick={() => setSelectedLineupSlot(selectedLineupSlot === slotIndex ? null : slotIndex)}
+                    className={`flex justify-between items-center px-4 py-3 rounded-xl border transition-colors ${
+                      selectedLineupSlot === slotIndex ? 'border-cyan-400 bg-cyan-400/20' : 'border-white/10 bg-black/30 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="font-sport text-xl text-white/50 w-6">{players[playerIndex].number}</span>
+                      <span className="font-sport text-xl">{players[playerIndex].name}</span>
+                    </div>
+                    <span className="text-xs uppercase tracking-[0.2em] text-cyan-300">{players[playerIndex].role}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm uppercase tracking-[0.28em] text-white/45 mb-4">Substitutes</div>
+              <div className="flex flex-col gap-2">
+                {subIndices.map((playerIndex, slotIndex) => (
+                  <button
+                    key={`sub-${slotIndex}`}
+                    onClick={() => {
+                      if (selectedLineupSlot !== null) {
+                        onSwap(selectedLineupSlot, slotIndex);
+                        setSelectedLineupSlot(null);
+                      }
+                    }}
+                    className={`flex justify-between items-center px-4 py-3 rounded-xl border transition-colors ${
+                      selectedLineupSlot !== null ? 'border-amber-400/50 bg-amber-400/10 hover:bg-amber-400/20 cursor-pointer' : 'border-white/10 bg-black/30 opacity-50 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="font-sport text-xl text-white/50 w-6">{players[playerIndex].number}</span>
+                      <span className="font-sport text-xl">{players[playerIndex].name}</span>
+                    </div>
+                    <span className="text-xs uppercase tracking-[0.2em] text-amber-300">{players[playerIndex].role}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.14),_rgba(15,23,42,0.96))] p-4 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.36em] text-cyan-300/70">Tactical Formation Board</div>
+                <div className="mt-1 font-sport text-2xl text-white">{clubName}</div>
+              </div>
+              <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 font-sport text-lg text-cyan-200">2-1-1</div>
+            </div>
+
+            <div className="relative mt-4 h-[250px] overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,_rgba(30,122,57,0.9),_rgba(18,85,43,0.96))]">
+              <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '20% 20%' }} />
+              <div className="absolute inset-x-0 top-1/2 h-px bg-white/40" />
+              <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/40" />
+              <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/45" />
+              {[{x:0.08,y:0.55},{x:0.28,y:0.24},{x:0.28,y:0.76},{x:0.52,y:0.5},{x:0.74,y:0.26},{x:0.74,y:0.74}].map((slot, index) => {
+                const player = formationPlayers[index] ?? { name: 'Bench', number: index + 1, role: 'MID' };
+                return (
+                  <div key={`board-${player.name}-${index}`} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${slot.x * 100}%`, top: `${slot.y * 100}%` }}>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-slate-950/85 text-[9px] font-black text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.45)]">
+                        {player.number}
+                      </div>
+                      <div className="rounded-full border border-white/15 bg-slate-900/75 px-2 py-1 text-[7px] uppercase tracking-[0.18em] text-white/80">{player.role}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 flex justify-end">
+          <button onClick={onContinue} className="rounded-xl bg-cyan-400 px-8 py-3 font-sport text-xl text-slate-950 hover:bg-cyan-300 transition-colors">
+            CONFIRM LINEUP
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const TeamSelectMenu: React.FC<TeamSelectMenuProps> = ({
   mode,
   currentTeam,
@@ -295,8 +701,10 @@ export const TeamSelectMenu: React.FC<TeamSelectMenuProps> = ({
   stadiums,
   selectedStadium,
   selectedClubId,
+  selectedFormation = '2-1-1',
   onSelectLeague,
   onSelectClub,
+  onSelectFormation,
   onSelectStadium,
   onBack,
   onContinue,
@@ -304,9 +712,12 @@ export const TeamSelectMenu: React.FC<TeamSelectMenuProps> = ({
   awayReady,
   canContinue,
 }) => {
+  const selectedClub = clubs.find(club => club.id === selectedClubId) ?? clubs[0];
+  const visibleClubs = clubs.slice(0, 6);
+
   return (
     <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-lg flex items-center justify-center z-50 text-white">
-      <div className="w-[min(95vw,1100px)] glass-panel rounded-3xl border border-white/10 p-8">
+      <div className="w-[min(95vw,1200px)] glass-panel rounded-3xl border border-white/10 p-8">
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-4xl font-sport text-cyan-300">{title || (currentTeam === Team.HOME ? 'P1 CLUB SELECT' : 'P2 CLUB SELECT')}</h2>
@@ -319,52 +730,110 @@ export const TeamSelectMenu: React.FC<TeamSelectMenuProps> = ({
           </button>
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          {[LeagueKey.LA_LIGA, LeagueKey.PREMIER_LEAGUE, LeagueKey.LIGUE_1, LeagueKey.SERIE_A, LeagueKey.PORTUGAL_LIGA].map(league => (
-            <button
-              key={league}
-              onClick={() => onSelectLeague(league)}
-              className={`rounded-full px-5 py-3 font-sport text-lg transition-colors ${
-                currentLeague === league ? 'bg-cyan-400 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
-              }`}
-            >
-              {leagueLabel(league)}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {clubs.map(club => (
-            <button
-              key={club.id}
-              onClick={() => onSelectClub(club.id)}
-              className={`rounded-2xl border px-5 py-5 text-left transition-all ${
-                selectedClubId === club.id ? 'border-cyan-300 bg-cyan-400/15' : 'border-white/10 bg-white/5 hover:bg-white/10'
-              }`}
-            >
-              <div className="font-sport text-2xl text-white">{club.name}</div>
-              <div className="mt-2 text-sm text-white/60">{leagueLabel(club.league)}</div>
-              <div className="mt-3 text-xs uppercase tracking-[0.25em] text-white/40">
-                {club.players.slice(0, 3).map(player => player.name).join(' • ')}
-              </div>
-            </button>
-          ))}
-        </div>
-
         <div className="mt-8">
-          <div className="text-sm uppercase tracking-[0.28em] text-white/45">Choose Stadium</div>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {stadiums.map(stadium => (
+          <div className="mt-8 flex flex-wrap gap-3">
+            {[LeagueKey.LA_LIGA, LeagueKey.PREMIER_LEAGUE, LeagueKey.LIGUE_1, LeagueKey.SERIE_A, LeagueKey.PORTUGAL_LIGA, LeagueKey.NATIONAL_LEAGUE].map(league => (
               <button
-                key={stadium.key}
-                onClick={() => onSelectStadium(stadium.key)}
-                className={`rounded-full px-5 py-3 font-sport text-base transition-colors ${
-                  selectedStadium === stadium.key ? 'bg-amber-300 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
+                key={league}
+                onClick={() => onSelectLeague(league)}
+                className={`rounded-full px-5 py-3 font-sport text-lg transition-colors ${
+                  currentLeague === league ? 'bg-cyan-400 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
                 }`}
               >
-                {stadium.label}
+                {leagueLabel(league)}
               </button>
             ))}
+          </div>
+
+          <div className="mt-6 grid xl:grid-cols-[1.45fr_0.9fr] gap-5">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {visibleClubs.map(club => {
+                const badgeText = club.badge || (club.shortName || club.name).slice(0, 3).toUpperCase();
+                const [badgeFrom, badgeTo] = club.badgeColors || ['#0ea5e9', '#1e293b'];
+                return (
+                  <button
+                    key={club.id}
+                    onClick={() => onSelectClub(club.id)}
+                    className={`group rounded-2xl border px-5 py-5 text-left transition-all duration-300 ${
+                      selectedClubId === club.id ? 'border-cyan-300 bg-cyan-400/15 shadow-[0_0_30px_rgba(34,211,238,0.18)]' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-400/30'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 text-lg font-black tracking-[0.12em] text-white shadow-[inset_0_-8px_12px_rgba(15,23,42,0.5)]"
+                        style={{ background: `linear-gradient(135deg, ${badgeFrom}, ${badgeTo})` }}
+                      >
+                        <span>{badgeText}</span>
+                        {club.logoUrl && <img src={club.logoUrl} alt={`${club.name} logo`} className="absolute inset-0 h-full w-full rounded-full bg-white object-contain p-1.5" />}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-sport text-2xl text-white">{club.name}</div>
+                        <div className="mt-1 text-sm text-white/60">{leagueLabel(club.league)}</div>
+                      </div>
+                    </div>
+                    <div className="mt-4 text-[10px] uppercase tracking-[0.25em] text-white/40">
+                      {club.country || club.players.slice(0, 3).map(player => player.name).join(' • ')}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedClub && (
+              <div className="rounded-3xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.18),_rgba(15,23,42,0.95))] p-4 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.32em] text-cyan-300/70">Selected Club</div>
+                    <div className="mt-1 flex items-center gap-2 font-sport text-2xl text-white">
+                      {selectedClub.logoUrl && <img src={selectedClub.logoUrl} alt="" className="h-9 w-9 rounded-full bg-white object-contain p-1" />}
+                      {selectedClub.name}
+                    </div>
+                  </div>
+                  <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 font-sport text-lg text-cyan-200">{selectedClub.country}</div>
+                </div>
+
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {FORMATIONS.map(formation => (
+                    <button
+                      key={formation}
+                      onClick={() => onSelectFormation?.(formation)}
+                      className={`rounded-full px-3 py-2 font-sport text-sm transition-colors ${
+                        selectedFormation === formation ? 'bg-cyan-300 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {formation}
+                    </button>
+                  ))}
+                </div>
+
+                <FootballFormationBoard
+                  clubName={selectedClub.name}
+                  formation={selectedFormation}
+                  players={selectedClub.players.slice(0, 6).map(player => ({
+                    name: player.name,
+                    number: player.number,
+                    role: player.role,
+                  }))}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8">
+            <div className="text-sm uppercase tracking-[0.28em] text-white/45">Choose Stadium</div>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {stadiums.map(stadium => (
+                <button
+                  key={stadium.key}
+                  onClick={() => onSelectStadium(stadium.key)}
+                  className={`rounded-full px-5 py-3 font-sport text-base transition-colors ${
+                    selectedStadium === stadium.key ? 'bg-amber-300 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
+                  }`}
+                >
+                  {stadium.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -390,6 +859,7 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
   awayFormation,
   onSelectFormation,
   onToggleTactics,
+  onToggleSquad,
   onContinue,
   onExit,
   homeReady,
@@ -399,16 +869,19 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
     <div className="absolute inset-0 bg-slate-900/88 backdrop-blur-lg flex items-center justify-center z-50 text-white">
       <div className="w-[min(92vw,980px)] glass-panel rounded-3xl border border-white/10 p-8">
         <h2 className="text-5xl font-sport font-black text-white tracking-tight">PAUSED</h2>
-        <p className="mt-3 text-sm uppercase tracking-[0.25em] text-white/50">Continue, open tactics, or exit match</p>
+        <p className="mt-3 text-sm uppercase tracking-[0.25em] text-white/50">Continue, open tactics, substitutions, or exit match</p>
 
         <div className="mt-8 flex flex-wrap gap-4">
-          <button onClick={onContinue} className="rounded-xl bg-cyan-500 px-6 py-3 font-sport text-xl text-white">
+          <button onClick={onContinue} className="rounded-xl bg-cyan-500 px-6 py-3 font-sport text-xl text-white hover:bg-cyan-400 transition-colors">
             CONTINUE
           </button>
-          <button onClick={onToggleTactics} className="rounded-xl bg-white/10 px-6 py-3 font-sport text-xl text-white">
+          <button onClick={onToggleTactics} className="rounded-xl bg-white/10 px-6 py-3 font-sport text-xl text-white hover:bg-white/20 transition-colors">
             {showTactics ? 'CLOSE TACTICS' : 'TACTICS'}
           </button>
-          <button onClick={onExit} className="rounded-xl bg-rose-500/80 px-6 py-3 font-sport text-xl text-white">
+          <button onClick={onToggleSquad} className="rounded-xl bg-white/10 px-6 py-3 font-sport text-xl text-white hover:bg-white/20 transition-colors">
+            SQUAD / SUBS
+          </button>
+          <button onClick={onExit} className="rounded-xl bg-rose-500/80 px-6 py-3 font-sport text-xl text-white hover:bg-rose-500 transition-colors">
             EXIT MATCH
           </button>
         </div>
@@ -422,7 +895,7 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
                   <button
                     key={formation}
                     onClick={() => onSelectFormation(Team.HOME, formation)}
-                    className={`rounded-xl px-5 py-3 font-sport ${homeFormation === formation ? 'bg-cyan-300 text-slate-950' : 'bg-white/10 text-white'}`}
+                    className={`rounded-xl px-5 py-3 font-sport transition-colors ${homeFormation === formation ? 'bg-cyan-300 text-slate-950' : 'bg-white/10 text-white hover:bg-white/20'}`}
                   >
                     {formation}
                   </button>
@@ -439,7 +912,7 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
                     <button
                       key={formation}
                       onClick={() => onSelectFormation(Team.AWAY, formation)}
-                      className={`rounded-xl px-5 py-3 font-sport ${awayFormation === formation ? 'bg-blue-300 text-slate-950' : 'bg-white/10 text-white'}`}
+                      className={`rounded-xl px-5 py-3 font-sport transition-colors ${awayFormation === formation ? 'bg-blue-300 text-slate-950' : 'bg-white/10 text-white hover:bg-white/20'}`}
                     >
                       {formation}
                     </button>
@@ -473,26 +946,41 @@ export const HalftimeMenu: React.FC<{ title?: string; actionLabel?: string; onCo
   );
 };
 
-export const PenaltyMenu: React.FC<{ score: ScoreState; isAwayHuman: boolean }> = ({ score, isAwayHuman }) => {
+export const PenaltyMenu: React.FC<{ score: ScoreState; isAwayHuman: boolean; isKeeperTurn: boolean; onChooseTarget: (aimX: number, aimY: number) => void }> = ({ score, isAwayHuman, isKeeperTurn, onChooseTarget }) => {
+  const [selectedTarget, setSelectedTarget] = useState<{ x: number; y: number } | null>(null);
   const homeHistory = score.penaltyHistoryHome || [];
   const awayHistory = score.penaltyHistoryAway || [];
   const lastPenalty = score.lastPenalty;
 
   return (
-    <div className="absolute top-24 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-      <div className="rounded-2xl border border-white/10 bg-black/70 px-6 py-4 text-center text-white shadow-xl min-w-[420px]">
+    <div className="absolute inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-950/45 px-4 py-8 pointer-events-auto">
+      <div className="rounded-2xl border border-white/10 bg-black/85 px-6 py-4 text-center text-white shadow-xl min-w-[min(420px,94vw)] max-w-lg">
         <div className="font-sport text-3xl text-cyan-300">PENALTY SHOOTOUT</div>
         <div className="mt-2 text-4xl font-black">{score.shootoutHome ?? 0} - {score.shootoutAway ?? 0}</div>
         <div className="mt-4 rounded-xl border border-white/10 bg-slate-900/80 p-4">
-          <div className="relative mx-auto h-36 w-64 rounded-t-3xl border-4 border-white">
+          <button type="button" aria-label={isKeeperTurn ? 'Choose where the goalkeeper dives' : 'Aim and take the penalty'} onClick={event => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const aimX = Math.max(0.18, Math.min(0.82, (event.clientX - rect.left) / rect.width));
+            const aimY = Math.max(0.18, Math.min(0.82, (event.clientY - rect.top) / rect.height));
+            setSelectedTarget({ x: aimX, y: aimY });
+            onChooseTarget(aimX, aimY);
+          }} className="relative mx-auto block h-36 w-64 cursor-crosshair rounded-t-3xl border-4 border-white bg-gradient-to-b from-sky-300/20 to-emerald-800/60 focus:outline-none focus:ring-2 focus:ring-cyan-300">
             <div className="absolute inset-x-4 bottom-0 h-1/2 border-x-2 border-t-2 border-white/70"></div>
+            <svg className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 text-white/80" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <circle cx="24" cy="7" r="4" fill="currentColor" />
+              <path d="M24 12v14m0-9-12 6m12-6 12 6m-12 3-9 13m9-13 9 13" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+              <path d="m8 20-3 3m35-3 3 3" stroke="#67e8f9" strokeWidth="3" strokeLinecap="round" />
+            </svg>
             {lastPenalty && (
               <div
                 className={`absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white ${lastPenalty.scored ? 'bg-emerald-400' : 'bg-rose-500'}`}
                 style={{ left: `${lastPenalty.x * 100}%`, top: `${lastPenalty.y * 100}%` }}
               />
             )}
-          </div>
+            {selectedTarget && (
+              <div className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cyan-300/80 shadow-[0_0_18px_rgba(34,211,238,0.9)]" style={{ left: `${selectedTarget.x * 100}%`, top: `${selectedTarget.y * 100}%` }} />
+            )}
+          </button>
         </div>
         <div className="mt-4 flex items-center justify-between gap-6">
           <div className="flex items-center gap-2">
@@ -513,7 +1001,7 @@ export const PenaltyMenu: React.FC<{ score: ScoreState; isAwayHuman: boolean }> 
           </div>
         </div>
         <div className="mt-2 text-sm uppercase tracking-[0.25em] text-white/60">
-          Aim with movement keys, then shoot with E {isAwayHuman ? '| P2 shoots with O' : '| AI takes away pens'}
+          {isKeeperTurn ? 'Click the goal to choose where to dive. The AI shoots in a moment.' : `Click the goal to aim and shoot${isAwayHuman ? ' · P2 takes away penalties' : ''}.`}
         </div>
       </div>
     </div>

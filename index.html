@@ -1,24 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="width:100%;height:100%;margin:0;padding:0;overflow:hidden;">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Arcade FC</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap');
-      body { margin: 0; overflow: hidden; background: #0f172a; touch-action: none; }
-      canvas { display: block; }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0f172a;
+        touch-action: none;
+      }
+
+      #root {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+      }
+
+      canvas {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
       .font-sport { font-family: 'Rajdhani', sans-serif; }
-      
+
       /* FIFA-style glassmorphism utility */
       .glass-panel {
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
-      
+
       /* Goal overlay animations */
       @keyframes scaleIn {
         0% { transform: scale(0); opacity: 0; }
@@ -36,20 +62,17 @@
         0% { border-color: rgba(6, 182, 212, 0.8); transform: scale(1); }
         100% { border-color: rgba(6, 182, 212, 0); transform: scale(1.1); }
       }
+
+      .menu-stadium-lights { overflow: hidden; background: radial-gradient(ellipse at 50% 0%, rgba(186,230,253,.28), transparent 44%); }
+      .menu-light-beam { position: absolute; top: -35%; width: 42%; height: 92%; opacity: .34; filter: blur(24px); transform-origin: top center; animation: stadiumSweep 9s ease-in-out infinite alternate; }
+      .menu-light-beam-left { left: 2%; background: linear-gradient(180deg, rgba(186,230,253,.38), rgba(34,211,238,.04) 65%, transparent); transform: rotate(17deg); }
+      .menu-light-beam-right { right: 2%; background: linear-gradient(180deg, rgba(253,230,138,.26), rgba(59,130,246,.04) 65%, transparent); transform: rotate(-17deg); animation-delay: -4.5s; }
+      .menu-stadium-crowd { position: absolute; inset: 36% 0 12%; opacity: .2; background-image: radial-gradient(circle, rgba(226,232,240,.68) 1px, transparent 1.6px), radial-gradient(circle, rgba(34,211,238,.6) 1px, transparent 1.6px); background-size: 13px 17px, 19px 23px; background-position: 0 0, 8px 7px; mask-image: linear-gradient(180deg, transparent, #000 24%, #000 85%, transparent); animation: crowdGlow 4s ease-in-out infinite alternate; }
+      .menu-stadium-pitch { position: absolute; inset: auto -10% -25%; height: 43%; background: repeating-linear-gradient(90deg, rgba(34,197,94,.12) 0 8%, rgba(2,44,34,.12) 8% 16%), linear-gradient(180deg, transparent, rgba(16,185,129,.2)); transform: perspective(320px) rotateX(28deg); transform-origin: top center; mask-image: linear-gradient(180deg, transparent, #000 35%); }
+      @keyframes stadiumSweep { from { opacity: .2; filter: blur(28px); } to { opacity: .48; filter: blur(18px); } }
+      @keyframes crowdGlow { from { opacity: .12; } to { opacity: .25; } }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://esm.sh/vite@^7.3.1"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>

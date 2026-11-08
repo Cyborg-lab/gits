@@ -62,6 +62,10 @@ export class Player extends Entity {
   facingAngle: number; // For dribbling direction
   decisionTimer: number; // For AI decision delays
   possessionStartTime: number; // To force dribbling before passing
+  tackleCooldown = 0;
+  slideTimer = 0;
+  isSentOff = false;
+  diveTimer = 0;
 
   constructor(x: number, y: number, team: Team, number: number, role: 'GK' | 'DEF' | 'MID' | 'FWD', name: string = 'Player') {
     super(x, y, PLAYER_RADIUS);
@@ -76,6 +80,10 @@ export class Player extends Entity {
     this.facingAngle = 0;
     this.decisionTimer = 0;
     this.possessionStartTime = 0;
+    this.tackleCooldown = 0;
+    this.slideTimer = 0;
+    this.isSentOff = false;
+    this.diveTimer = 0;
   }
 
   reset() {
@@ -86,6 +94,9 @@ export class Player extends Entity {
     this.facingAngle = 0;
     this.decisionTimer = 0;
     this.possessionStartTime = 0;
+    this.tackleCooldown = 0;
+    this.slideTimer = 0;
+    this.diveTimer = 0;
   }
 
   update(inputTarget: Vector2D | null, isSprinting: boolean, dt: number) {
@@ -119,6 +130,9 @@ export class Player extends Entity {
     }
 
     if (this.kickCooldown > 0) this.kickCooldown -= dt;
+    if (this.tackleCooldown > 0) this.tackleCooldown = Math.max(0, this.tackleCooldown - dt);
+    if (this.slideTimer > 0) this.slideTimer = Math.max(0, this.slideTimer - dt);
+    if (this.diveTimer > 0) this.diveTimer = Math.max(0, this.diveTimer - dt);
 
     this.constrainToPitch();
   }

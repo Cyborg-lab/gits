@@ -18,11 +18,12 @@ import {
   GoalScorerInfo,
 } from '../types';
 import { HUD } from './HUD';
-import { ChampionsLeagueTables, GameOverMenu, GoalOverlay, HalftimeMenu, MainMenu, PauseMenu, PenaltyMenu, TeamSelectMenu, TrophyOverlay } from './Menus';
+import { ChampionsLeagueTables, GameOverMenu, GoalOverlay, HalftimeMenu, MainMenu, PauseMenu, PenaltyMenu, SquadSelectMenu, TeamSelectMenu, TrophyOverlay } from './Menus';
 import { CLUBS, createDefaultMatchSetup, getClubById, getClubsByLeague } from '../game/clubs';
+import { saveMatch } from '../game/matchDatabase';
 
 type LanRole = 'offline' | 'host' | 'guest';
-type CompetitionType = 'KICK_OFF' | 'CHAMPIONS_LEAGUE';
+type CompetitionType = 'KICK_OFF' | 'CHAMPIONS_LEAGUE' | 'NATIONAL_LEAGUE';
 type LanTransport = 'none' | 'ws' | 'local';
 
 interface ChampionsLeagueStage {
@@ -78,6 +79,30 @@ const STADIUM_OPTIONS: Array<{ key: StadiumKey; label: string }> = [
 ];
 const LOCAL_LAN_LOBBY = 'arcade-fc-local-lobby';
 
+const playMatchCue = (event: string) => {
+  try {
+    const AudioContextCtor = window.AudioContext;
+    if (!AudioContextCtor) return;
+    const audio = new AudioContextCtor();
+    void audio.resume();
+    const oscillator = audio.createOscillator(); const gain = audio.createGain();
+    const isWhistle = event.includes('OFFSIDE') || event.includes('FOUL');
+    oscillator.type = isWhistle ? 'square' : event.includes('GOAL') ? 'sawtooth' : 'triangle';
+    oscillator.frequency.setValueAtTime(isWhistle ? 1250 : event.includes('CARD') ? 420 : 560, audio.currentTime);
+    if (isWhistle) oscillator.frequency.exponentialRampToValueAtTime(900, audio.currentTime + 0.3);
+    gain.gain.setValueAtTime(isWhistle ? 0.022 : 0.045, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.45);
+    oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + 0.45);
+    if (event.includes('GOAL')) {
+      const length = audio.sampleRate; const buffer = audio.createBuffer(1, length, audio.sampleRate); const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+      const crowd = audio.createBufferSource(); const crowdGain = audio.createGain();
+      crowd.buffer = buffer; crowdGain.gain.value = 0.025; crowd.connect(crowdGain); crowdGain.connect(audio.destination); crowd.start();
+    }
+    window.setTimeout(() => void audio.close(), 1300);
+  } catch { /* Audio can be disabled by the browser or the user. */ }
+};
+
 const createEmptyPlayerInput = (): PlayerInputState => ({
   up: false,
   down: false,
@@ -86,6 +111,7 @@ const createEmptyPlayerInput = (): PlayerInputState => ({
   shoot: false,
   pass: false,
   sprint: false,
+  tackle: false,
 });
 
 const createEmptyInputState = (): InputState => ({
@@ -94,8 +120,8 @@ const createEmptyInputState = (): InputState => ({
 });
 
 const cloneSetup = (setup: MatchSetup): MatchSetup => ({
-  home: { ...setup.home },
-  away: { ...setup.away },
+  home: { ...setup.home, lineupIndices: [...setup.home.lineupIndices], subIndices: [...setup.home.subIndices] },
+  away: { ...setup.away, lineupIndices: [...setup.away.lineupIndices], subIndices: [...setup.away.subIndices] },
   stadium: setup.stadium,
 });
 
@@ -247,6 +273,8 @@ const applyGroupStageResultToTables = (run: ChampionsLeagueRun, opponentClubId: 
 
 const GameCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isTrainingMultiplayer, setIsTrainingMultiplayer] = useState(false);
+  const isTrainingMultiplayerRef = useRef(false);
   const engineRef = useRef<GameEngine>(new GameEngine());
   const rendererRef = useRef<Renderer | null>(null);
   const inputRef = useRef<InputState>(createEmptyInputState());
@@ -281,6 +309,8 @@ const GameCanvas: React.FC = () => {
   const [isConnectingLan, setIsConnectingLan] = useState(false);
 
   const [showTeamSelect, setShowTeamSelect] = useState(false);
+  const [showSquadSelect, setShowSquadSelect] = useState(false);
+  const [squadSelectTeam, setSquadSelectTeam] = useState<Team>(Team.HOME);
   const [selectionTeam, setSelectionTeam] = useState<Team>(Team.HOME);
   const [matchSetup, setMatchSetup] = useState<MatchSetup>(createDefaultMatchSetup());
   const [homeSelectionReady, setHomeSelectionReady] = useState(false);
@@ -289,6 +319,9 @@ const GameCanvas: React.FC = () => {
   const [homePauseReady, setHomePauseReady] = useState(false);
   const [awayPauseReady, setAwayPauseReady] = useState(false);
   const [lastScorer, setLastScorer] = useState<GoalScorerInfo | null>(null);
+  const lastPlayedEventRef = useRef('');
+  const matchSessionIdRef = useRef('');
+  const savedMatchIdRef = useRef('');
 
   const syncHudState = useCallback((nextSnapshot: GameSnapshot) => {
     setScore(prev => {
@@ -303,7 +336,12 @@ const GameCanvas: React.FC = () => {
         prev.period === normalized.period &&
         prev.restartLabel === normalized.restartLabel &&
         prev.shootoutHome === normalized.shootoutHome &&
-        prev.shootoutAway === normalized.shootoutAway
+        prev.shootoutAway === normalized.shootoutAway &&
+        prev.penaltyHistoryHome?.length === normalized.penaltyHistoryHome?.length &&
+        prev.penaltyHistoryAway?.length === normalized.penaltyHistoryAway?.length &&
+        prev.matchEvent === normalized.matchEvent &&
+        prev.cardsHome?.yellow === normalized.cardsHome?.yellow && prev.cardsHome?.red === normalized.cardsHome?.red &&
+        prev.cardsAway?.yellow === normalized.cardsAway?.yellow && prev.cardsAway?.red === normalized.cardsAway?.red
       ) {
         return prev;
       }
@@ -392,8 +430,11 @@ const GameCanvas: React.FC = () => {
 
         if (message.type === 'start_match') {
           const setup = cloneSetup(matchSetup);
+          matchSessionIdRef.current = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
           const engine = new GameEngine();
           engine.setMode(GameMode.MULTI_PLAYER);
+          engine.penaltiesOnDraw = competitionType === 'KICK_OFF';
+          engine.isTrainingMultiplayer = isTrainingMultiplayerRef.current;
           engine.setAIDifficulty(aiDifficulty);
           engine.configureMatch(setup);
           engine.startGame();
@@ -461,7 +502,7 @@ const GameCanvas: React.FC = () => {
         }
       }, 1500);
     }
-  }, [aiDifficulty, matchSetup, roomCode, sendLanMessage, syncHudState]);
+  }, [aiDifficulty, competitionType, matchSetup, sendLanMessage, syncHudState]);
 
   const connectToLanServer = useCallback(() => {
     if (wsRef.current && (wsRef.current.readyState === WebSocket.OPEN || wsRef.current.readyState === WebSocket.CONNECTING)) {
@@ -528,8 +569,11 @@ const GameCanvas: React.FC = () => {
 
         if (message.type === 'start_match') {
           const setup = cloneSetup(matchSetup);
+          matchSessionIdRef.current = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
           const engine = new GameEngine();
           engine.setMode(GameMode.MULTI_PLAYER);
+          engine.penaltiesOnDraw = competitionType === 'KICK_OFF';
+          engine.isTrainingMultiplayer = isTrainingMultiplayerRef.current;
           engine.setAIDifficulty(aiDifficulty);
           engine.configureMatch(setup);
           engine.startGame();
@@ -601,13 +645,16 @@ const GameCanvas: React.FC = () => {
     };
 
     attachSocketHandlers(new WebSocket(`${protocol}//${hostCandidates[candidateIndex]}:3001`), hostCandidates[candidateIndex]);
-  }, [aiDifficulty, initLocalLanFallback, lanHost, matchSetup, sendLanMessage, syncHudState]);
+  }, [aiDifficulty, competitionType, initLocalLanFallback, lanHost, matchSetup, sendLanMessage, syncHudState]);
 
-  const startConfiguredMatch = useCallback((setup: MatchSetup, mode: GameMode) => {
+  const startConfiguredMatch = useCallback((setup: MatchSetup, mode: GameMode, isFriendly = competitionType === 'KICK_OFF') => {
+    matchSessionIdRef.current = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     inputRef.current = createEmptyInputState();
     remoteAwayInputRef.current = createEmptyPlayerInput();
     const engine = new GameEngine();
     engine.setMode(mode);
+    engine.penaltiesOnDraw = isFriendly;
+    engine.isTrainingMultiplayer = isTrainingMultiplayerRef.current;
     engine.setAIDifficulty(aiDifficulty);
     engine.configureMatch(setup);
     engine.startGame();
@@ -622,18 +669,50 @@ const GameCanvas: React.FC = () => {
     setAwaySelectionReady(false);
     setHomePauseReady(false);
     setAwayPauseReady(false);
-  }, [aiDifficulty]);
+  }, [aiDifficulty, competitionType]);
 
-  const finalizeSinglePlayerSelection = useCallback(() => {
-    const homeClubId = matchSetup.home.clubId;
-    const aiClub = pickRandomClub([homeClubId]);
-    const nextSetup = cloneSetup(matchSetup);
-    nextSetup.away.clubId = aiClub.id;
-    nextSetup.away.league = aiClub.league;
-    nextSetup.away.formation = '2-1-1';
-    setMatchSetup(nextSetup);
-    startConfiguredMatch(nextSetup, GameMode.SINGLE_PLAYER);
-  }, [matchSetup, startConfiguredMatch]);
+  const handlePenaltyTarget = (aimX: number, aimY: number) => {
+    const isHomeKick = (score.penaltyHistoryHome?.length || 0) <= (score.penaltyHistoryAway?.length || 0);
+    const isGuest = lanRoleRef.current === 'guest';
+    const isMultiplayer = gameMode === GameMode.MULTI_PLAYER;
+    const localShooter = isMultiplayer
+      ? lanRoleRef.current === 'offline' || (isGuest ? !isHomeKick : isHomeKick)
+      : isHomeKick;
+    const side = isMultiplayer && lanRoleRef.current === 'offline'
+      ? (isHomeKick ? inputRef.current.home : inputRef.current.away)
+      : isMultiplayer && isGuest ? inputRef.current.away : inputRef.current.home;
+    side.aimX = aimX;
+    side.aimY = aimY;
+    side.shoot = localShooter;
+    if (isGuest) sendGuestInput();
+    if (localShooter) {
+      window.setTimeout(() => {
+        side.shoot = false;
+        if (isGuest) sendGuestInput();
+      }, 100);
+    }
+  };
+
+  useEffect(() => {
+    if (gameState !== GameStatus.GAME_OVER || lanRole === 'guest') return;
+    const matchId = matchSessionIdRef.current;
+    if (!matchId || savedMatchIdRef.current === matchId) return;
+    savedMatchIdRef.current = matchId;
+    const home = getClubById(matchSetup.home.clubId);
+    const away = getClubById(matchSetup.away.clubId);
+    void saveMatch({
+      id: matchId,
+      playedAt: new Date().toISOString(),
+      home: home?.name || score.homeLabel || matchSetup.home.clubId,
+      away: away?.name || score.awayLabel || matchSetup.away.clubId,
+      homeScore: score.home,
+      awayScore: score.away,
+      shootoutHome: score.shootoutHome,
+      shootoutAway: score.shootoutAway,
+      mode: gameMode,
+      stadium: matchSetup.stadium,
+    }).catch(error => console.error('Unable to save match history:', error));
+  }, [gameMode, gameState, lanRole, matchSetup, score]);
 
   const startChampionsLeagueStage = useCallback((run: ChampionsLeagueRun) => {
     const playerClub = getClubById(run.playerClubId);
@@ -665,7 +744,7 @@ const GameCanvas: React.FC = () => {
       currentOpponentName: opponent.name,
       usedOpponentIds: shouldKeepOpponent || run.usedOpponentIds.includes(opponent.id) ? run.usedOpponentIds : [...run.usedOpponentIds, opponent.id],
     });
-    startConfiguredMatch(nextSetup, GameMode.SINGLE_PLAYER);
+    startConfiguredMatch(nextSetup, GameMode.SINGLE_PLAYER, false);
   }, [matchSetup.away, matchSetup.home, matchSetup.stadium, startConfiguredMatch]);
 
   const startChampionsLeagueRun = useCallback(() => {
@@ -794,6 +873,18 @@ const GameCanvas: React.FC = () => {
             engineRef.current.switchActivePlayer(Team.HOME);
           }
           break;
+        case 'KeyP':
+          if (isGuest) {
+            engineRef.current.switchActivePlayer(Team.AWAY);
+            sendGuestInput();
+          } else if (isOfflineMultiplayer) {
+            engineRef.current.switchActivePlayer(Team.AWAY);
+          }
+          break;
+        case 'KeyF':
+          if (isGuest) { inputRef.current.away.tackle = true; sendGuestInput(); }
+          else inputRef.current.home.tackle = true;
+          break;
         case 'ShiftLeft':
           if (isGuest) {
             inputRef.current.away.sprint = true;
@@ -801,6 +892,9 @@ const GameCanvas: React.FC = () => {
           } else {
             inputRef.current.home.sprint = true;
           }
+          break;
+        case 'Semicolon':
+          if (isOfflineMultiplayer) inputRef.current.away.tackle = true;
           break;
         case 'KeyI':
           if (isOfflineMultiplayer) inputRef.current.away.up = true;
@@ -897,6 +991,10 @@ const GameCanvas: React.FC = () => {
             inputRef.current.home.sprint = false;
           }
           break;
+        case 'KeyF':
+          if (isGuest) { inputRef.current.away.tackle = false; sendGuestInput(); }
+          else inputRef.current.home.tackle = false;
+          break;
         case 'KeyI':
           if (isOfflineMultiplayer) inputRef.current.away.up = false;
           break;
@@ -918,6 +1016,9 @@ const GameCanvas: React.FC = () => {
         case 'ShiftRight':
           if (isOfflineMultiplayer) inputRef.current.away.sprint = false;
           break;
+        case 'Semicolon':
+          if (isOfflineMultiplayer) inputRef.current.away.tackle = false;
+          break;
       }
     };
 
@@ -935,6 +1036,12 @@ const GameCanvas: React.FC = () => {
 
     if (lanRoleRef.current === 'guest') {
       if (remoteSnapshotRef.current) {
+        const event = remoteSnapshotRef.current.score.matchEvent;
+        if (event && event !== lastPlayedEventRef.current) {
+          lastPlayedEventRef.current = event;
+          playMatchCue(event);
+        }
+        if (!event) lastPlayedEventRef.current = '';
         renderer.render(remoteSnapshotRef.current as unknown as GameEngine);
       }
       return;
@@ -948,6 +1055,12 @@ const GameCanvas: React.FC = () => {
     engine.update(frameInput, dt);
     const snapshot = engine.toSnapshot();
 
+    if (snapshot.score.matchEvent && snapshot.score.matchEvent !== lastPlayedEventRef.current) {
+      lastPlayedEventRef.current = snapshot.score.matchEvent;
+      playMatchCue(snapshot.score.matchEvent);
+    }
+    if (!snapshot.score.matchEvent) lastPlayedEventRef.current = '';
+
     if (
       Math.floor(snapshot.score.time) !== Math.floor(score.time) ||
       snapshot.score.home !== score.home ||
@@ -956,6 +1069,11 @@ const GameCanvas: React.FC = () => {
       snapshot.score.restartLabel !== score.restartLabel ||
       snapshot.score.shootoutHome !== score.shootoutHome ||
       snapshot.score.shootoutAway !== score.shootoutAway ||
+      snapshot.score.penaltyHistoryHome?.length !== score.penaltyHistoryHome?.length ||
+      snapshot.score.penaltyHistoryAway?.length !== score.penaltyHistoryAway?.length ||
+      snapshot.score.matchEvent !== score.matchEvent ||
+      snapshot.score.cardsHome?.yellow !== score.cardsHome?.yellow || snapshot.score.cardsHome?.red !== score.cardsHome?.red ||
+      snapshot.score.cardsAway?.yellow !== score.cardsAway?.yellow || snapshot.score.cardsAway?.red !== score.cardsAway?.red ||
       snapshot.status !== gameState
     ) {
       setScore(snapshot.score);
@@ -1016,7 +1134,7 @@ const GameCanvas: React.FC = () => {
     setChampionsLeagueRun(null);
   };
 
-  const handleSelectMode = (mode: GameMode) => {
+  const handleSelectMode = (mode: GameMode, isMultiplayer?: boolean) => {
     const nextSetup = createDefaultMatchSetup();
     setGameMode(mode);
     setCompetitionType('KICK_OFF');
@@ -1027,12 +1145,27 @@ const GameCanvas: React.FC = () => {
     setIsChoosingMode(false);
     setHomeSelectionReady(false);
     setAwaySelectionReady(false);
+    isTrainingMultiplayerRef.current = !!isMultiplayer;
+    setIsTrainingMultiplayer(!!isMultiplayer);
   };
 
   const handleSelectChampionsLeague = () => {
     const nextSetup = createDefaultMatchSetup();
     setGameMode(GameMode.SINGLE_PLAYER);
     setCompetitionType('CHAMPIONS_LEAGUE');
+    setChampionsLeagueRun(null);
+    setMatchSetup(nextSetup);
+    setSelectionTeam(Team.HOME);
+    setShowTeamSelect(true);
+    setIsChoosingMode(false);
+    setHomeSelectionReady(false);
+    setAwaySelectionReady(false);
+  };
+
+  const handleSelectNationalLeague = () => {
+    const nextSetup = createDefaultMatchSetup();
+    setGameMode(GameMode.SINGLE_PLAYER);
+    setCompetitionType('NATIONAL_LEAGUE');
     setChampionsLeagueRun(null);
     setMatchSetup(nextSetup);
     setSelectionTeam(Team.HOME);
@@ -1110,6 +1243,16 @@ const GameCanvas: React.FC = () => {
     });
   };
 
+  const handleTeamFormationSelect = (formation: FormationKey) => {
+    updateCurrentSelection(selectionTeam, draft => {
+      if (selectionTeam === Team.HOME) {
+        draft.home.formation = formation;
+      } else {
+        draft.away.formation = formation;
+      }
+    });
+  };
+
   const handleStadiumSelect = (stadium: StadiumKey) => {
     setMatchSetup(prev => ({
       ...prev,
@@ -1126,13 +1269,32 @@ const GameCanvas: React.FC = () => {
     setIsChoosingMode(true);
   };
 
+  const finalizeSinglePlayerSelection = useCallback(() => {
+    // Deprecated: Now the user selects both teams manually, so we just start the match or open squad select
+    startConfiguredMatch(matchSetup, GameMode.SINGLE_PLAYER);
+  }, [matchSetup, startConfiguredMatch]);
+
   const handleContinueTeamSelect = () => {
+    if (competitionType === 'CHAMPIONS_LEAGUE') {
+      startChampionsLeagueRun();
+      return;
+    }
+
+    // In single-player mode the opponent is controlled by the AI, so there is
+    // no second team selection or readiness confirmation for the player to do.
     if (gameMode === GameMode.SINGLE_PLAYER) {
-      if (competitionType === 'CHAMPIONS_LEAGUE') {
-        startChampionsLeagueRun();
-        return;
-      }
-      finalizeSinglePlayerSelection();
+      const opponent = pickRandomClub([matchSetup.home.clubId]);
+      const nextSetup = cloneSetup(matchSetup);
+      nextSetup.away = {
+        ...nextSetup.away,
+        clubId: opponent.id,
+        league: opponent.league,
+        formation: '2-1-1',
+      };
+      setMatchSetup(nextSetup);
+      setShowTeamSelect(false);
+      setSquadSelectTeam(Team.HOME);
+      setShowSquadSelect(true);
       return;
     }
 
@@ -1142,7 +1304,54 @@ const GameCanvas: React.FC = () => {
     }
 
     if (homeSelectionReady && awaySelectionReady) {
-      startConfiguredMatch(matchSetup, GameMode.MULTI_PLAYER);
+      setShowTeamSelect(false);
+      setSquadSelectTeam(Team.HOME);
+      setShowSquadSelect(true);
+    }
+  };
+
+  const handleContinueSquadSelect = () => {
+    if (squadSelectTeam === Team.HOME && gameMode === GameMode.MULTI_PLAYER) {
+      setSquadSelectTeam(Team.AWAY);
+    } else {
+      setShowSquadSelect(false);
+      startConfiguredMatch(matchSetup, gameMode);
+      if (lanRoleRef.current === 'host') {
+        sendLanMessage({ type: 'start_match' });
+      }
+    }
+  };
+
+  const handleBackFromSquadSelect = () => {
+    if (squadSelectTeam === Team.AWAY) {
+      setSquadSelectTeam(Team.HOME);
+    } else {
+      setShowSquadSelect(false);
+      setShowTeamSelect(true);
+    }
+  };
+
+  const handleSquadSwap = (lineupIndex: number, subIndex: number) => {
+    const currentTeamSetup = squadSelectTeam === Team.HOME ? matchSetup.home : matchSetup.away;
+    const oldLineupPlayerIndex = currentTeamSetup.lineupIndices[lineupIndex];
+    const oldSubPlayerIndex = currentTeamSetup.subIndices[subIndex];
+
+    if (oldLineupPlayerIndex === undefined || oldSubPlayerIndex === undefined) {
+      return;
+    }
+
+    const nextSetup = cloneSetup(matchSetup);
+    const teamSetup = squadSelectTeam === Team.HOME ? nextSetup.home : nextSetup.away;
+    teamSetup.lineupIndices[lineupIndex] = oldSubPlayerIndex;
+    teamSetup.subIndices[subIndex] = oldLineupPlayerIndex;
+    setMatchSetup(nextSetup);
+
+    if (engineRef.current && (gameState === GameStatus.PAUSED || gameState === GameStatus.HALFTIME)) {
+      const club = getClubById(squadSelectTeam === Team.HOME ? matchSetup.home.clubId : matchSetup.away.clubId);
+      const newPlayerProfile = club.players[oldSubPlayerIndex];
+      if (newPlayerProfile) {
+        engineRef.current.substitutePlayer(squadSelectTeam, lineupIndex, newPlayerProfile as any);
+      }
     }
   };
 
@@ -1179,7 +1388,9 @@ const GameCanvas: React.FC = () => {
   const handleExitToMenu = () => {
     inputRef.current = createEmptyInputState();
     remoteAwayInputRef.current = createEmptyPlayerInput();
-    engineRef.current = new GameEngine();
+    const engine = new GameEngine();
+    engine.isTrainingMultiplayer = isTrainingMultiplayer;
+    engineRef.current = engine;
     setShowPauseTactics(false);
     setShowTeamSelect(false);
     setHomePauseReady(false);
@@ -1351,6 +1562,7 @@ const GameCanvas: React.FC = () => {
           onOpenModeSelect={handleOfflineStart}
           onSelectMode={handleSelectMode}
           onSelectChampionsLeague={handleSelectChampionsLeague}
+          onSelectNationalLeague={handleSelectNationalLeague}
           onSelectDifficulty={setAiDifficulty}
           selectedDifficulty={aiDifficulty}
           isChoosingMode={isChoosingMode}
@@ -1375,20 +1587,34 @@ const GameCanvas: React.FC = () => {
           mode={gameMode}
           currentTeam={selectionTeam}
           currentLeague={currentLeague}
-          title={competitionType === 'CHAMPIONS_LEAGUE' ? 'CHAMPIONS LEAGUE CLUB SELECT' : undefined}
-          subtitle={competitionType === 'CHAMPIONS_LEAGUE' ? 'Choose your club, then press Left Shift to begin the road to the final' : undefined}
+          title={competitionType === 'CHAMPIONS_LEAGUE' ? 'CHAMPIONS LEAGUE CLUB SELECT' : competitionType === 'NATIONAL_LEAGUE' ? 'NATIONAL LEAGUE CLUB SELECT' : undefined}
+          subtitle={competitionType === 'CHAMPIONS_LEAGUE' ? 'Choose your club, then press Left Shift to begin the road to the final' : competitionType === 'NATIONAL_LEAGUE' ? 'Choose your nation or club and lead the global campaign' : undefined}
           clubs={getClubsByLeague(currentLeague)}
           stadiums={STADIUM_OPTIONS}
           selectedStadium={matchSetup.stadium}
           selectedClubId={currentClubId}
+          selectedFormation={selectionTeam === Team.HOME ? matchSetup.home.formation : matchSetup.away.formation}
           onSelectLeague={handleTeamLeagueSelect}
           onSelectClub={handleTeamClubSelect}
+          onSelectFormation={handleTeamFormationSelect}
           onSelectStadium={handleStadiumSelect}
           onBack={handleBackFromTeamSelect}
           onContinue={handleContinueTeamSelect}
           homeReady={homeSelectionReady}
           awayReady={awaySelectionReady}
           canContinue={teamSelectCanContinue}
+        />
+      )}
+
+      {showSquadSelect && (
+        <SquadSelectMenu
+          clubName={getClubById(squadSelectTeam === Team.HOME ? matchSetup.home.clubId : matchSetup.away.clubId).name}
+          players={getClubById(squadSelectTeam === Team.HOME ? matchSetup.home.clubId : matchSetup.away.clubId).players}
+          lineupIndices={squadSelectTeam === Team.HOME ? matchSetup.home.lineupIndices : matchSetup.away.lineupIndices}
+          subIndices={squadSelectTeam === Team.HOME ? matchSetup.home.subIndices : matchSetup.away.subIndices}
+          onSwap={handleSquadSwap}
+          onContinue={handleContinueSquadSelect}
+          onBack={handleBackFromSquadSelect}
         />
       )}
 
@@ -1400,6 +1626,12 @@ const GameCanvas: React.FC = () => {
           awayFormation={matchSetup.away.formation}
           onSelectFormation={handlePauseFormationSelect}
           onToggleTactics={handleTogglePauseTactics}
+          onToggleSquad={() => {
+            setSquadSelectTeam(gameMode === GameMode.MULTI_PLAYER ? (lanRoleRef.current === 'guest' ? Team.AWAY : Team.HOME) : Team.HOME);
+            setShowSquadSelect(true);
+            setGameState(GameStatus.PLAYING);
+            setTimeout(() => setGameState(GameStatus.PAUSED), 10);
+          }}
           onContinue={handleResume}
           onExit={handleExitToMenu}
           homeReady={homePauseReady}
@@ -1408,7 +1640,18 @@ const GameCanvas: React.FC = () => {
       )}
 
       {gameState === GameStatus.HALFTIME && <HalftimeMenu title={breakTitle} actionLabel={breakActionLabel} onContinue={handleContinueBreak} />}
-      {gameState === GameStatus.PENALTY && <PenaltyMenu score={score} isAwayHuman={gameMode === GameMode.MULTI_PLAYER} />}
+      {gameState === GameStatus.PENALTY && <PenaltyMenu
+        score={score}
+        isAwayHuman={gameMode === GameMode.MULTI_PLAYER}
+        isKeeperTurn={gameMode === GameMode.SINGLE_PLAYER
+          ? (score.penaltyHistoryHome?.length || 0) > (score.penaltyHistoryAway?.length || 0)
+          : gameMode === GameMode.MULTI_PLAYER && lanRole === 'host'
+            ? (score.penaltyHistoryHome?.length || 0) > (score.penaltyHistoryAway?.length || 0)
+            : gameMode === GameMode.MULTI_PLAYER && lanRole === 'guest'
+              ? (score.penaltyHistoryHome?.length || 0) <= (score.penaltyHistoryAway?.length || 0)
+              : false}
+        onChooseTarget={handlePenaltyTarget}
+      />}
       {gameState === GameStatus.GOAL && (
         <GoalOverlay
           scorerName={lastScorer?.name}
@@ -1420,7 +1663,7 @@ const GameCanvas: React.FC = () => {
         <GameOverMenu
           score={score}
           onRestart={handleRestart}
-          onRevanche={championsLeagueRun ? undefined : handleRevanche}
+          onRevanche={championsLeagueRun || score.shootoutHome !== undefined ? undefined : handleRevanche}
           onExit={handleExitToMenu}
           onAdvance={canAdvanceChampionsLeague ? handleAdvanceChampionsLeague : undefined}
           advanceLabel={currentChampionsStage?.advanceLabel}
@@ -1448,6 +1691,7 @@ const GameCanvas: React.FC = () => {
         <HUD
           score={score}
           gameMode={gameMode}
+          isLanGuest={lanRole === 'guest'}
           tournamentInfo={championsLeagueRun ? {
             stageLabel: currentChampionsStage?.menuTitle || 'Champions League',
             legLabel: championsLeagueRun.currentTie ? `LEG ${championsLeagueRun.currentTie.leg}` : undefined,

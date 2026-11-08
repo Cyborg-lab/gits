@@ -17,6 +17,8 @@ export enum Team {
 export enum GameMode {
   SINGLE_PLAYER = 'SINGLE_PLAYER',
   MULTI_PLAYER = 'MULTI_PLAYER',
+  STANDARD_TRAINING = 'STANDARD_TRAINING',
+  MATCH_TRAINING = 'MATCH_TRAINING',
 }
 
 export type AIDifficulty = 'EASY' | 'NORMAL' | 'MEDIUM' | 'HARD' | 'EXTREME';
@@ -27,6 +29,7 @@ export enum LeagueKey {
   LIGUE_1 = 'LIGUE_1',
   SERIE_A = 'SERIE_A',
   PORTUGAL_LIGA = 'PORTUGAL_LIGA',
+  NATIONAL_LEAGUE = 'NATIONAL_LEAGUE',
 }
 
 export type FormationKey = '1-2-1' | '2-1-1' | '1-1-2';
@@ -43,6 +46,10 @@ export interface ClubDefinition {
   name: string;
   shortName: string;
   league: LeagueKey;
+  logoUrl?: string;
+  badge?: string;
+  badgeColors?: [string, string];
+  country?: string;
   players: PlayerProfile[];
 }
 
@@ -50,6 +57,8 @@ export interface TeamSelection {
   league: LeagueKey;
   clubId: string;
   formation: FormationKey;
+  lineupIndices: number[]; // Indices of the 6 starting players in the club's players array
+  subIndices: number[]; // Indices of the remaining players on the bench
 }
 
 export interface MatchSetup {
@@ -73,6 +82,9 @@ export interface PlayerInputState {
   shoot: boolean;
   pass: boolean;
   sprint: boolean;
+  tackle: boolean;
+  aimX?: number;
+  aimY?: number;
 }
 
 export interface InputState {
@@ -103,6 +115,9 @@ export interface ScoreState {
     y: number;
     scored: boolean;
   };
+  cardsHome?: { yellow: number; red: number };
+  cardsAway?: { yellow: number; red: number };
+  matchEvent?: string;
 }
 
 export interface SnapshotVector {
@@ -121,15 +136,28 @@ export interface PlayerSnapshot {
   isControlled: boolean;
   kickCooldown: number;
   facingAngle: number;
+  slideTimer?: number;
+  tackleCooldown?: number;
+  isSentOff?: boolean;
+  diveTimer?: number;
 }
 
 export interface GameSnapshot {
   status: GameStatus;
   score: ScoreState;
   mode: GameMode;
+  stadium?: StadiumKey;
   players: PlayerSnapshot[];
   ball: {
     pos: SnapshotVector;
     vel: SnapshotVector;
+  };
+  officials?: {
+    referee: SnapshotVector;
+    assistants: [SnapshotVector, SnapshotVector];
+    offsideFlag: boolean;
+    cardsHome: { yellow: number; red: number };
+    cardsAway: { yellow: number; red: number };
+    event?: string;
   };
 }

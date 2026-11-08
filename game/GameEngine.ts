@@ -9,7 +9,7 @@ import {
 } from '../constants';
 import { getClubById } from './clubs';
 
-type RestartType = 'KICK OFF' | 'THROW IN' | 'CORNER' | 'GOAL KICK';
+type RestartType = 'KICK OFF' | 'THROW IN' | 'CORNER' | 'GOAL KICK' | 'FREE KICK';
 
 export class GameEngine {
   ball: Ball;
@@ -20,6 +20,8 @@ export class GameEngine {
   activePlayerIndices: Record<Team, number>;
   mode: GameMode;
   stadium: StadiumKey;
+  isTrainingMultiplayer: boolean = false;
+  penaltiesOnDraw = false;
   
   private lastGoalTime: number = 0;
   private nextKickOffTeam: Team = Team.HOME;
@@ -50,10 +52,24 @@ export class GameEngine {
     shootingTeam: Team.HOME as Team,
     keeperDiveTarget: null as Vector2D | null,
     shotTarget: null as Vector2D | null,
+    centralSave: false,
     shooterIndexHome: 0,
     shooterIndexAway: 0,
   };
   lastScorer: GoalScorerInfo | null = null;
+  refereePos = new Vector2D(W / 2, H / 2);
+  assistantsPos: [Vector2D, Vector2D] = [new Vector2D(W / 2, 28), new Vector2D(W / 2, H - 28)];
+  offsideFlagRaised = false;
+  matchEvent = '';
+  cards: Record<Team, { yellow: number; red: number }> = {
+    [Team.HOME]: { yellow: 0, red: 0 }, [Team.AWAY]: { yellow: 0, red: 0 },
+  };
+  private offsideCandidates: Player[] = [];
+  private indirectOffsideRestart = false;
+  private indirectKicker: Player | null = null;
+  private matchEventUntil = 0;
+  private refereeFocusTarget: Vector2D | null = null;
+  private refereeFocusUntil = 0;
 
   constructor() {
     this.ball = new Ball();
@@ -107,11 +123,19 @@ export class GameEngine {
   }
 
   startGame() {
+    this.players.forEach(player => { player.isSentOff = false; });
     this.score = { home: 0, away: 0 };
     this.time = 0;
     this.currentPeriod = 1;
     this.lastScorer = null;
     this.lastTouchPlayer = null;
+    this.cards[Team.HOME] = { yellow: 0, red: 0 };
+    this.cards[Team.AWAY] = { yellow: 0, red: 0 };
+    this.offsideCandidates = [];
+    this.indirectOffsideRestart = false;
+    this.indirectKicker = null;
+    this.offsideFlagRaised = false;
+    this.matchEvent = '';
     this.restartType = 'KICK OFF';
     this.resetPenaltyState();
     this.nextKickOffTeam = Team.HOME; // Start with Home kickoff
@@ -135,7 +159,7 @@ export class GameEngine {
   }
 
   startNextPeriod() {
-    if (this.currentPeriod === 2 && this.score.home === this.score.away) {
+    if (this.currentPeriod === 2 && this.score.home === this.score.away && !this.penaltiesOnDraw) {
       this.currentPeriod = 3;
       this.time = 95 * 60;
       this.restartType = 'KICK OFF';
@@ -166,8 +190,18 @@ export class GameEngine {
     this.aiDifficulty = difficulty;
   }
 
-  isHumanControlled(team: Team) {
-    return team === Team.HOME || this.mode === GameMode.MULTI_PLAYER;
+  isHumanControlled(team: Team): boolean {
+    if (this.mode === GameMode.SINGLE_PLAYER) {
+        return team === Team.HOME;
+    }
+    if (this.mode === GameMode.MULTI_PLAYER) {
+        return true; 
+    }
+    if (this.mode === GameMode.STANDARD_TRAINING || this.mode === GameMode.MATCH_TRAINING) {
+        if (this.isTrainingMultiplayer) return true;
+        return team === Team.HOME;
+    }
+    return false;
   }
 
   private getAiSettings() {
@@ -213,11 +247,15 @@ export class GameEngine {
         awayLabel: this.awayLabel,
         shootoutHome: this.penaltyState.active || this.penaltyState.historyHome.length ? this.penaltyState.shootoutHome : undefined,
         shootoutAway: this.penaltyState.active || this.penaltyState.historyAway.length ? this.penaltyState.shootoutAway : undefined,
-        penaltyHistoryHome: this.penaltyState.historyHome,
-        penaltyHistoryAway: this.penaltyState.historyAway,
+        penaltyHistoryHome: [...this.penaltyState.historyHome],
+        penaltyHistoryAway: [...this.penaltyState.historyAway],
         lastPenalty: this.penaltyState.lastPenalty,
+        cardsHome: { ...this.cards[Team.HOME] },
+        cardsAway: { ...this.cards[Team.AWAY] },
+        matchEvent: this.matchEvent || undefined,
       },
       mode: this.mode,
+      stadium: this.stadium,
       players: this.players.map(player => ({
         team: player.team,
         number: player.number,
@@ -229,10 +267,22 @@ export class GameEngine {
         isControlled: player.isControlled,
         kickCooldown: player.kickCooldown,
         facingAngle: player.facingAngle,
+        slideTimer: player.slideTimer,
+        tackleCooldown: player.tackleCooldown,
+        isSentOff: player.isSentOff,
+        diveTimer: player.diveTimer,
       })),
       ball: {
         pos: { x: this.ball.pos.x, y: this.ball.pos.y },
         vel: { x: this.ball.vel.x, y: this.ball.vel.y },
+      },
+      officials: {
+        referee: { x: this.refereePos.x, y: this.refereePos.y },
+        assistants: this.assistantsPos.map(pos => ({ x: pos.x, y: pos.y })) as [{ x: number; y: number }, { x: number; y: number }],
+        offsideFlag: this.offsideFlagRaised,
+        cardsHome: { ...this.cards[Team.HOME] },
+        cardsAway: { ...this.cards[Team.AWAY] },
+        event: this.matchEvent || undefined,
       },
     };
   }
@@ -253,8 +303,8 @@ export class GameEngine {
     this.homeLabel = homeClub.shortName;
     this.awayLabel = awayClub.shortName;
 
-    this.applyClubToTeam(Team.HOME, homeClub.players);
-    this.applyClubToTeam(Team.AWAY, awayClub.players);
+    this.applyClubToTeam(Team.HOME, homeClub.players, setup.home.lineupIndices);
+    this.applyClubToTeam(Team.AWAY, awayClub.players, setup.away.lineupIndices);
   }
 
   setFormation(team: Team, formation: FormationKey, refreshPositions = false) {
@@ -271,13 +321,18 @@ export class GameEngine {
     }
   }
 
-  private applyClubToTeam(team: Team, squad: Array<{ name: string; number: number; role: 'GK' | 'DEF' | 'MID' | 'FWD' }>) {
-    const orderedPlayers = [
-      squad.find(player => player.role === 'GK'),
-      ...squad.filter(player => player.role === 'DEF').slice(0, 2),
-      squad.find(player => player.role === 'MID'),
-      ...squad.filter(player => player.role === 'FWD').slice(0, 2),
-    ].filter(Boolean) as Array<{ name: string; number: number; role: 'GK' | 'DEF' | 'MID' | 'FWD' }>;
+  private applyClubToTeam(team: Team, squad: Array<{ name: string; number: number; role: 'GK' | 'DEF' | 'MID' | 'FWD' }>, lineupIndices?: number[]) {
+    let orderedPlayers = [];
+    if (lineupIndices && lineupIndices.length === 6) {
+      orderedPlayers = lineupIndices.map(idx => squad[idx]).filter(Boolean);
+    } else {
+      orderedPlayers = [
+        squad.find(player => player.role === 'GK'),
+        ...squad.filter(player => player.role === 'DEF').slice(0, 2),
+        squad.find(player => player.role === 'MID'),
+        ...squad.filter(player => player.role === 'FWD').slice(0, 2),
+      ].filter(Boolean) as Array<{ name: string; number: number; role: 'GK' | 'DEF' | 'MID' | 'FWD' }>;
+    }
 
     const baseIndex = team === Team.HOME ? 0 : 6;
     for (let i = 0; i < 6; i += 1) {
@@ -288,6 +343,18 @@ export class GameEngine {
         player.number = source.number;
         player.role = source.role;
       }
+    }
+  }
+
+  substitutePlayer(team: Team, pitchIndex: number, newPlayer: { name: string; number: number; role: 'GK' | 'DEF' | 'MID' | 'FWD' }) {
+    const baseIndex = team === Team.HOME ? 0 : 6;
+    const playerIndex = baseIndex + pitchIndex;
+    const player = this.players[playerIndex];
+    if (player && !player.isSentOff && newPlayer) {
+      player.name = newPlayer.name;
+      player.number = newPlayer.number;
+      player.role = newPlayer.role;
+      player.stamina = 100;
     }
   }
 
@@ -336,6 +403,7 @@ export class GameEngine {
   resetPositions(kickOffTeam: Team) {
     this.ball.reset();
     this.players.forEach(p => p.reset());
+    this.offsideCandidates = [];
     this.lastPassInput[Team.HOME] = false;
     this.lastPassInput[Team.AWAY] = false;
 
@@ -355,6 +423,13 @@ export class GameEngine {
 
     // Apply startPos
     for(let i=0; i<6; i++) {
+        if (this.mode === GameMode.STANDARD_TRAINING && i !== this.activePlayerIndices[Team.HOME]) {
+            this.players[i].pos = new Vector2D(-1000, -1000);
+            this.players[i].startPos = new Vector2D(-1000, -1000);
+            this.players[i].vel = new Vector2D(0,0);
+            continue;
+        }
+        if (this.players[i].isSentOff) { this.players[i].pos = new Vector2D(-1000, -1000); this.players[i].startPos = new Vector2D(-1000, -1000); continue; }
         this.players[i].pos = this.players[i].startPos.copy();
         this.players[i].facingAngle = 0; // Face Right
         this.players[i].vel = new Vector2D(0,0);
@@ -368,6 +443,13 @@ export class GameEngine {
 
     // Apply startPos
     for(let i=6; i<12; i++) {
+        if (this.mode === GameMode.STANDARD_TRAINING && this.players[i].role !== 'GK') {
+            this.players[i].pos = new Vector2D(-1000, -1000);
+            this.players[i].startPos = new Vector2D(-1000, -1000);
+            this.players[i].vel = new Vector2D(0,0);
+            continue;
+        }
+        if (this.players[i].isSentOff) { this.players[i].pos = new Vector2D(-1000, -1000); this.players[i].startPos = new Vector2D(-1000, -1000); continue; }
         this.players[i].pos = this.players[i].startPos.copy();
         this.players[i].facingAngle = Math.PI; // Face Left
         this.players[i].vel = new Vector2D(0,0);
@@ -385,6 +467,7 @@ export class GameEngine {
   }
 
   setActivePlayer(p: Player) {
+    if (p.isSentOff) return;
     const idx = this.players.indexOf(p);
     if (idx !== -1) {
         const currentIdx = this.activePlayerIndices[p.team];
@@ -398,6 +481,11 @@ export class GameEngine {
 
   switchActivePlayer(team: Team) {
     const activePlayer = this.players[this.activePlayerIndices[team]];
+    if (activePlayer?.isSentOff) {
+      const replacement = this.players.find(player => player.team === team && !player.isSentOff && player.role !== 'GK')
+        || this.players.find(player => player.team === team && !player.isSentOff);
+      if (replacement) this.setActivePlayer(replacement);
+    }
     if (this.ball.owner === activePlayer) return;
 
     // Find closest player to ball
@@ -412,7 +500,7 @@ export class GameEngine {
       let minDist = Infinity;
       let closestIdx = -1;
       this.players.forEach((p, idx) => {
-          if (p.team === team) {
+          if (p.team === team && !p.isSentOff) {
               const d = p.pos.dist(this.ball.pos);
               if (d < minDist) {
                   minDist = d;
@@ -423,7 +511,60 @@ export class GameEngine {
       return closestIdx;
   }
 
+  private setRefereeFocus(target: Vector2D, durationMs: number) {
+    this.refereeFocusTarget = target.copy();
+    this.refereeFocusUntil = Date.now() + durationMs;
+  }
+
+  private issueCard(team: Team, culprit: Player | null, cardType: 'yellow' | 'red', severeFault = false) {
+    if (!culprit || culprit.isSentOff) return;
+
+    const cardState = this.cards[team];
+    const focusTarget = culprit.pos.copy();
+    if (cardType === 'yellow') {
+      cardState.yellow += 1;
+      this.matchEvent = severeFault ? 'SERIOUS FOUL - RED CARD' : 'FOUL - YELLOW CARD';
+      this.matchEventUntil = Date.now() + 2400;
+      this.setRefereeFocus(focusTarget, 2200);
+
+      if (cardState.yellow >= 2) {
+        cardState.yellow = 0;
+        cardState.red += 1;
+        culprit.isSentOff = true;
+        culprit.pos = new Vector2D(-1000, -1000);
+        culprit.vel = new Vector2D(0, 0);
+        this.matchEvent = 'SECOND YELLOW - RED CARD';
+        this.matchEventUntil = Date.now() + 2600;
+        this.setRefereeFocus(focusTarget, 2400);
+
+        const replacement = this.players.find(player => player.team === team && player !== culprit && !player.isSentOff && player.role !== 'GK')
+          || this.players.find(player => player.team === team && player !== culprit && !player.isSentOff);
+        if (replacement) this.setActivePlayer(replacement);
+      }
+      return;
+    }
+
+    cardState.red += 1;
+    culprit.isSentOff = true;
+    this.setRefereeFocus(focusTarget, 2600);
+    culprit.pos = new Vector2D(-1000, -1000);
+    culprit.vel = new Vector2D(0, 0);
+    this.matchEvent = 'SERIOUS FOUL - RED CARD';
+    this.matchEventUntil = Date.now() + 2800;
+
+    const replacement = this.players.find(player => player.team === team && player !== culprit && !player.isSentOff && player.role !== 'GK')
+      || this.players.find(player => player.team === team && player !== culprit && !player.isSentOff);
+    if (replacement) this.setActivePlayer(replacement);
+  }
+
   update(input: InputState, dt: number) {
+    if (this.matchEvent && Date.now() > this.matchEventUntil) {
+      if (this.matchEvent.includes('OFFSIDE')) this.offsideFlagRaised = false;
+      this.matchEvent = '';
+    }
+    if (this.refereeFocusTarget && Date.now() > this.refereeFocusUntil) {
+      this.refereeFocusTarget = null;
+    }
     const isHomePassPressed = input.home.pass && !this.lastPassInput[Team.HOME];
     const isAwayPassPressed = input.away.pass && !this.lastPassInput[Team.AWAY];
     this.lastPassInput[Team.HOME] = input.home.pass;
@@ -478,14 +619,15 @@ export class GameEngine {
         // Adding dt each frame means +60 per real second.
         // 90 real seconds * 60 = 5400.
         // 90 in-game minutes = 90 * 60 seconds = 5400.
-        this.time += dt; 
+        this.time += dt;
         
-        if (this.currentPeriod === 1 && this.time >= 45 * 60 && this.time - dt < 45 * 60) {
+        if (this.currentPeriod === 1 && this.time >= 45 * 60) {
              this.status = GameStatus.HALFTIME;
              return;
         } else if (this.currentPeriod === 2 && this.time >= 95 * 60) {
              if (this.score.home === this.score.away) {
-               this.status = GameStatus.HALFTIME;
+               if (this.penaltiesOnDraw) this.startPenaltyShootout();
+               else this.status = GameStatus.HALFTIME;
              } else {
                this.status = GameStatus.GAME_OVER;
              }
@@ -524,6 +666,7 @@ export class GameEngine {
 
         // 3. Update All Other Players (AI)
         this.players.forEach((p, idx) => {
+          if (p.isSentOff) return;
           if (idx === this.activePlayerIndices[Team.HOME]) {
             return;
           }
@@ -542,7 +685,7 @@ export class GameEngine {
         });
 
         this.players.forEach(player => {
-          if (player.role === 'GK') {
+          if (!player.isSentOff && player.role === 'GK') {
             this.constrainGoalkeeperToPenaltyArea(player);
           }
         });
@@ -551,7 +694,17 @@ export class GameEngine {
         this.updateBallPhysics(dt);
         this.handleCollisions();
         this.checkGoal();
-        this.checkOutOfBounds();
+        if (this.status === GameStatus.PLAYING) this.checkOutOfBounds();
+        if (this.refereeFocusTarget) {
+          this.refereePos = this.refereePos.add(this.refereeFocusTarget.sub(this.refereePos).limit(5 * dt));
+        } else {
+          const refTarget = this.ball.pos.add(new Vector2D(-50, -35));
+          this.refereePos = this.refereePos.add(refTarget.sub(this.refereePos).limit(4 * dt));
+        }
+        this.assistantsPos = [
+          new Vector2D(Math.max(30, Math.min(W - 30, this.ball.pos.x)), 28),
+          new Vector2D(Math.max(30, Math.min(W - 30, this.ball.pos.x)), H - 28),
+        ];
     }
   }
 
@@ -634,6 +787,33 @@ export class GameEngine {
     activePlayer.update(inputDir, input.sprint, dt);
     this.constrainGoalkeeperToPenaltyArea(activePlayer);
 
+    if (input.tackle && activePlayer.tackleCooldown <= 0) {
+      activePlayer.tackleCooldown = 42;
+      activePlayer.slideTimer = 18;
+      const slideDirection = inputDir.mag() > 0
+        ? inputDir.normalize()
+        : new Vector2D(Math.cos(activePlayer.facingAngle), Math.sin(activePlayer.facingAngle));
+      activePlayer.vel = activePlayer.vel.add(slideDirection.mult(5));
+      const victim = this.ball.owner;
+      const opponents = this.players.filter(player => player.team !== team && player.role !== 'GK' && player.pos.dist(activePlayer.pos) < PLAYER_RADIUS * 2 + 24);
+      if (victim && victim.team !== team && victim.pos.dist(activePlayer.pos) < PLAYER_RADIUS * 2 + 24) {
+        const foulSpeed = activePlayer.vel.mag();
+        const isSevereFoul = foulSpeed > 7.5 || activePlayer.slideTimer > 10 || (victim.pos.dist(activePlayer.pos) < 18 && foulSpeed > 4.5);
+        if (isSevereFoul) {
+          this.issueCard(team, activePlayer, 'red', true);
+        } else {
+          this.issueCard(team, activePlayer, 'yellow', false);
+        }
+        this.setupRestart('FREE KICK', victim.team, this.ball.pos.copy());
+        return;
+      }
+      if (opponents.length > 0 && !victim) {
+        this.ball.owner = activePlayer;
+        this.lastTouchPlayer = activePlayer;
+        this.setActivePlayer(activePlayer);
+      }
+    }
+
     if (this.ball.owner === activePlayer) {
       if (input.shoot && activePlayer.kickCooldown <= 0) {
         this.shootBall(activePlayer, input.sprint);
@@ -646,6 +826,10 @@ export class GameEngine {
   }
 
   performRestart(kicker: Player, input: PlayerInputState, isPassPressed: boolean) {
+      if (this.indirectOffsideRestart) {
+          if (isPassPressed || input.shoot || !this.isHumanControlled(kicker.team)) this.performKickOffPass(kicker);
+          return;
+      }
       if (this.restartType === 'THROW IN' || isPassPressed) {
           this.performKickOffPass(kicker);
           return;
@@ -691,6 +875,8 @@ export class GameEngine {
   }
 
   shootBall(p: Player, isPowerShot = false) {
+    this.ball.pos = p.pos.add(new Vector2D(Math.cos(p.facingAngle), Math.sin(p.facingAngle)).mult(PLAYER_RADIUS + BALL_RADIUS + 2));
+    this.offsideCandidates = [];
     const isHome = p.team === Team.HOME;
     const targetBias = p.pos.y < H / 2 ? GOAL_WIDTH * 0.22 : -GOAL_WIDTH * 0.22;
     const targetY = Math.max(H / 2 - GOAL_WIDTH / 2 + 20, Math.min(H / 2 + GOAL_WIDTH / 2 - 20, H / 2 + targetBias + (Math.random() - 0.5) * GOAL_WIDTH * 0.28));
@@ -701,7 +887,7 @@ export class GameEngine {
     
     this.ball.owner = null;
     this.lastTouchPlayer = p;
-    this.ball.vel = shotDir.add(noise).normalize().mult(PLAYER_KICK_FORCE * (isPowerShot ? 1.45 : 1.12));
+    this.ball.vel = shotDir.add(noise).normalize().mult(PLAYER_KICK_FORCE * (isPowerShot ? 1.6 : 1.12));
     p.kickCooldown = isPowerShot ? 18 : 13;
   }
 
@@ -734,6 +920,9 @@ export class GameEngine {
 
   // Unified helper for mechanics
   executePass(p: Player, target: Player | null, fallbackDir: Vector2D) {
+      this.ball.pos = p.pos.add(new Vector2D(Math.cos(p.facingAngle), Math.sin(p.facingAngle)).mult(PLAYER_RADIUS + BALL_RADIUS + 2));
+      this.offsideCandidates = this.getOffsideCandidates(p);
+      this.offsideFlagRaised = false;
       this.ball.owner = null;
       p.kickCooldown = 20;
       this.lastTouchPlayer = p;
@@ -744,6 +933,34 @@ export class GameEngine {
       } else {
           this.ball.vel = fallbackDir.normalize().mult(PLAYER_PASS_FORCE);
       }
+  }
+
+  private getOffsideCandidates(passer: Player): Player[] {
+    const attackingRight = passer.team === Team.HOME;
+    const opponents = this.players.filter(player => player.team !== passer.team && !player.isSentOff).sort((a, b) =>
+      attackingRight ? b.pos.x - a.pos.x : a.pos.x - b.pos.x,
+    );
+    if (opponents.length < 2) return [];
+    const secondLastDefender = opponents[1].pos.x;
+    const line = attackingRight ? Math.max(this.ball.pos.x, secondLastDefender) : Math.min(this.ball.pos.x, secondLastDefender);
+    return this.players.filter(player => {
+      if (player.team !== passer.team || player === passer || player.role === 'GK' || player.isSentOff) return false;
+      const inOpponentHalf = attackingRight ? player.pos.x > W / 2 : player.pos.x < W / 2;
+      const beyondLine = attackingRight ? player.pos.x > line : player.pos.x < line;
+      return inOpponentHalf && beyondLine;
+    });
+  }
+
+  private whistleOffside(player: Player) {
+    this.offsideFlagRaised = true;
+    this.matchEvent = 'OFFSIDE';
+    this.matchEventUntil = Date.now() + 2400;
+    this.lastTouchPlayer = player;
+    const defendingTeam = player.team === Team.HOME ? Team.AWAY : Team.HOME;
+    this.offsideCandidates = [];
+    this.setupRestart('FREE KICK', defendingTeam, this.ball.pos.copy());
+    this.indirectOffsideRestart = true;
+    this.indirectKicker = this.ball.owner;
   }
 
   updateBallPhysics(dt: number) {
@@ -793,6 +1010,12 @@ export class GameEngine {
      
      // GK Logic - Enhanced AI Goalkeeper
       if (p.role === 'GK') {
+          if (this.ball.owner === p) {
+              const safeMate = this.findBestPassCandidate(p);
+              this.executePass(p, safeMate, new Vector2D(1, 0)); 
+              return;
+          }
+          
           // Goalkeeper stays near his line.
           let targetY = this.ball.pos.y;
           let targetX = p.startPos.x;
@@ -1076,6 +1299,7 @@ export class GameEngine {
   handleCollisions() {
     // Ball Collisions
     this.players.forEach(p => {
+        if (p.isSentOff) return;
         if (p.role === 'GK' && this.ball.owner === null) {
             const keeperRange = PLAYER_RADIUS + BALL_RADIUS + 28;
             const closeToGoal = p.team === Team.HOME ? this.ball.pos.x < PENALTY_AREA_WIDTH * 0.65 : this.ball.pos.x > W - PENALTY_AREA_WIDTH * 0.65;
@@ -1085,6 +1309,7 @@ export class GameEngine {
                 this.lastTouchPlayer = p;
                 p.kickCooldown = 14;
                 p.possessionStartTime = Date.now();
+                p.diveTimer = 12;
                 this.setActivePlayer(p);
                 return;
             }
@@ -1092,9 +1317,18 @@ export class GameEngine {
 
         const dist = p.pos.dist(this.ball.pos);
         if (dist < PLAYER_RADIUS + BALL_RADIUS + 5) {
+            if (this.indirectOffsideRestart && p !== this.indirectKicker) {
+              this.indirectOffsideRestart = false;
+              this.indirectKicker = null;
+            }
             // Collect Loose Ball
             if (this.ball.owner === null) {
                 if (p.kickCooldown <= 0) {
+                    if (this.offsideCandidates.length && this.offsideCandidates[0].team !== p.team) this.offsideCandidates = [];
+                    if (this.offsideCandidates.includes(p)) {
+                        this.whistleOffside(p);
+                        return;
+                    }
                     this.ball.owner = p;
                     this.lastTouchPlayer = p;
                     // NEW: Set possession time
@@ -1106,6 +1340,11 @@ export class GameEngine {
             // Steal
             else if (this.ball.owner !== p && this.ball.owner.team !== p.team) {
                 if (p.kickCooldown <= 0) {
+                    if (this.offsideCandidates.length && this.offsideCandidates[0].team !== p.team) this.offsideCandidates = [];
+                    if (this.offsideCandidates.includes(p)) {
+                        this.whistleOffside(p);
+                        return;
+                    }
                     const victim = this.ball.owner;
                     // Steal!
                     this.ball.owner = p;
@@ -1147,6 +1386,16 @@ export class GameEngine {
     const goalTop = H/2 - GOAL_WIDTH/2;
     const goalBottom = H/2 + GOAL_WIDTH/2;
     if (this.ball.pos.y > goalTop && this.ball.pos.y < goalBottom) {
+        if (this.indirectOffsideRestart && (this.ball.pos.x < 0 || this.ball.pos.x > W)) {
+            const crossedGoalFor = this.ball.pos.x < 0 ? Team.AWAY : Team.HOME;
+            const isOwnGoal = this.lastTouchPlayer?.team !== crossedGoalFor;
+            const restartTeam = isOwnGoal ? crossedGoalFor : crossedGoalFor === Team.HOME ? Team.AWAY : Team.HOME;
+            const spot = isOwnGoal
+              ? new Vector2D(this.ball.pos.x < 0 ? 45 : W - 45, this.ball.pos.y < H / 2 ? 45 : H - 45)
+              : new Vector2D(this.ball.pos.x < 0 ? 140 : W - 140, H / 2);
+            this.setupRestart(isOwnGoal ? 'CORNER' : 'GOAL KICK', restartTeam, spot);
+            return;
+        }
         if (this.ball.pos.x < 0) {
             this.score.away++;
             this.nextKickOffTeam = Team.HOME;
@@ -1182,6 +1431,8 @@ export class GameEngine {
   handleGoal() {
       this.status = GameStatus.GOAL;
       this.lastGoalTime = Date.now();
+      this.matchEvent = 'GOAL!';
+      this.matchEventUntil = Date.now() + 4000;
       this.ball.owner = null;
       this.ball.vel = new Vector2D(0, 0);
   }
@@ -1200,6 +1451,7 @@ export class GameEngine {
       this.penaltyState.shootingTeam = Team.HOME;
       this.penaltyState.keeperDiveTarget = null;
       this.penaltyState.shotTarget = null;
+      this.penaltyState.centralSave = false;
       this.penaltyState.shooterIndexHome = 0;
       this.penaltyState.shooterIndexAway = 0;
   }
@@ -1242,11 +1494,12 @@ export class GameEngine {
 
       if (this.isHumanControlled(team)) {
           if (wantsShot) {
-              this.launchPenaltyShot(team, teamInput);
+              const keeperInput = team === Team.HOME ? input.away : input.home;
+              this.launchPenaltyShot(team, teamInput, this.isHumanControlled(team === Team.HOME ? Team.AWAY : Team.HOME) ? keeperInput : undefined);
           }
       } else {
           this.penaltyState.aiTimer += dt;
-          if (this.penaltyState.aiTimer > 45) {
+          if (this.penaltyState.aiTimer > 180) {
               this.launchPenaltyShot(team, {
                 up: Math.random() > 0.5,
                 down: Math.random() > 0.5,
@@ -1255,34 +1508,44 @@ export class GameEngine {
                 shoot: true,
                 pass: false,
                 sprint: false,
-              });
+                tackle: false,
+              }, this.isHumanControlled(Team.HOME) ? input.home : undefined);
           }
       }
   }
 
-  private launchPenaltyShot(team: Team, input: PlayerInputState) {
+  private launchPenaltyShot(team: Team, input: PlayerInputState, humanKeeperInput?: PlayerInputState) {
       const striker = this.ball.owner;
       if (!striker) return;
 
       const shootingToRight = team === Team.HOME;
-      const targetXNormalized = input.left ? 0.24 : input.right ? 0.76 : 0.5;
-      const targetYNormalized = input.up ? 0.26 : input.down ? 0.72 : 0.48;
+      const targetXNormalized = input.aimX ?? (input.left ? 0.24 : input.right ? 0.76 : 0.5);
+      const targetYNormalized = input.aimX !== undefined || input.aimY !== undefined
+        ? (input.aimX ?? 0.5) * 0.65 + (input.aimY ?? 0.5) * 0.35
+        : input.up ? 0.26 : input.down ? 0.72 : 0.48;
       const goalX = shootingToRight ? W + 5 : -5;
       const goalY = H / 2 - GOAL_WIDTH / 2 + (GOAL_WIDTH * targetYNormalized);
       const shotTarget = new Vector2D(goalX, goalY);
       const shotDir = shotTarget.sub(this.ball.pos).normalize();
       const power = PLAYER_KICK_FORCE * (input.sprint ? 1.34 : 1.12);
       const keeper = this.players.find(player => player.team !== team && player.role === 'GK') || null;
+      const centralShot = targetXNormalized > 0.38 && targetXNormalized < 0.62 && targetYNormalized > 0.32 && targetYNormalized < 0.68;
 
       this.penaltyState.shotInFlight = true;
       this.penaltyState.shootingTeam = team;
       this.penaltyState.shotTarget = shotTarget;
       this.penaltyState.aiTimer = 0;
+      this.penaltyState.centralSave = Boolean(keeper && centralShot && !humanKeeperInput && !this.isHumanControlled(team === Team.HOME ? Team.AWAY : Team.HOME) && Math.random() < 0.7);
 
       if (keeper) {
         const saveBias = this.aiDifficulty === 'EXTREME' ? 0.75 : this.aiDifficulty === 'HARD' ? 0.62 : this.aiDifficulty === 'MEDIUM' ? 0.54 : 0.45;
         const guessX = Math.random() < saveBias ? targetXNormalized : 0.2 + Math.random() * 0.6;
-        const guessY = Math.random() < saveBias ? targetYNormalized : 0.2 + Math.random() * 0.6;
+        // A human keeper can click the save position before the AI takes its shot.
+        // The AI also reads central penalties more reliably to stop routine shots.
+        const humanDiveY = humanKeeperInput && (humanKeeperInput.aimX !== undefined || humanKeeperInput.aimY !== undefined)
+          ? (humanKeeperInput.aimX ?? 0.5) * 0.65 + (humanKeeperInput.aimY ?? 0.5) * 0.35
+          : undefined;
+        const guessY = humanDiveY ?? (this.penaltyState.centralSave ? targetYNormalized : Math.random() < saveBias ? targetYNormalized : 0.2 + Math.random() * 0.6);
         const keeperLineX = shootingToRight ? W - 88 : 88;
         const keeperLineY = H / 2 - GOAL_WIDTH / 2 + (GOAL_WIDTH * guessY);
         this.penaltyState.keeperDiveTarget = new Vector2D(keeperLineX, keeperLineY);
@@ -1301,9 +1564,10 @@ export class GameEngine {
       if (keeper && this.penaltyState.keeperDiveTarget) {
         const diveDir = this.penaltyState.keeperDiveTarget.sub(keeper.pos);
         keeper.update(diveDir, true, dt);
+        keeper.diveTimer = 18;
         this.constrainGoalkeeperToPenaltyArea(keeper);
 
-        if (keeper.pos.dist(this.ball.pos) < PLAYER_RADIUS + BALL_RADIUS + 18) {
+        if (keeper.pos.dist(this.ball.pos) < PLAYER_RADIUS + BALL_RADIUS + 4) {
           this.completePenalty(false);
           return;
         }
@@ -1313,11 +1577,11 @@ export class GameEngine {
       const goalBottom = H / 2 + GOAL_WIDTH / 2;
       if (this.ball.pos.y > goalTop && this.ball.pos.y < goalBottom) {
         if (this.penaltyState.shootingTeam === Team.HOME && this.ball.pos.x > W) {
-          this.completePenalty(true);
+          this.completePenalty(!this.penaltyState.centralSave);
           return;
         }
         if (this.penaltyState.shootingTeam === Team.AWAY && this.ball.pos.x < 0) {
-          this.completePenalty(true);
+          this.completePenalty(!this.penaltyState.centralSave);
           return;
         }
       }
@@ -1353,6 +1617,7 @@ export class GameEngine {
       this.penaltyState.shotInFlight = false;
       this.penaltyState.shotTarget = null;
       this.penaltyState.keeperDiveTarget = null;
+      this.penaltyState.centralSave = false;
       this.penaltyState.resolveAt = 60;
       this.penaltyState.aiTimer = 0;
       this.ball.owner = null;
@@ -1381,9 +1646,9 @@ export class GameEngine {
       this.aiKickOffTimer = 0;
 
       const shootingToRight = team === Team.HOME;
-      const teamPlayers = this.players.filter(p => p.team === team && p.role !== 'GK');
+      const teamPlayers = this.players.filter(p => p.team === team && p.role !== 'GK' && !p.isSentOff);
       const shooterIndex = team === Team.HOME ? this.penaltyState.shooterIndexHome : this.penaltyState.shooterIndexAway;
-      const striker = teamPlayers[shooterIndex % teamPlayers.length];
+      const striker = teamPlayers.length ? teamPlayers[shooterIndex % teamPlayers.length] : this.players.find(p => p.team === team && !p.isSentOff)!;
       const keeper = this.players.find(player => player.team !== team && player.role === 'GK') || this.players.find(player => player.team !== team)!;
       const penaltySpotX = shootingToRight ? W - 240 : 240;
       const keeperX = shootingToRight ? W - 95 : 95;
@@ -1408,6 +1673,7 @@ export class GameEngine {
       const inGoalRange = this.ball.pos.y > goalTop && this.ball.pos.y < goalBottom;
       if (this.ball.owner) return;
 
+      // Side-line exits are throw-ins; end-line exits are corners or goal kicks.
       if (this.ball.pos.y < 0) {
           const restartTeam = this.lastTouchPlayer?.team === Team.HOME ? Team.AWAY : Team.HOME;
           this.setupRestart('THROW IN', restartTeam, new Vector2D(Math.max(120, Math.min(W - 120, this.ball.pos.x)), 35));
@@ -1439,6 +1705,8 @@ export class GameEngine {
   }
 
   private setupRestart(type: RestartType, team: Team, spot: Vector2D) {
+      this.indirectOffsideRestart = false;
+      this.indirectKicker = null;
       this.status = GameStatus.KICKOFF;
       this.restartType = type;
       this.aiKickOffTimer = 0;
@@ -1451,11 +1719,12 @@ export class GameEngine {
       taker.kickCooldown = 0;
       taker.possessionStartTime = Date.now();
       this.ball.owner = taker;
+      this.offsideCandidates = [];
       this.lastTouchPlayer = taker;
       this.setActivePlayer(taker);
 
-      const support = this.players.find(player => player.team === team && player !== taker && player.role !== 'GK')
-        || this.players.find(player => player.team === team && player !== taker);
+      const support = this.players.find(player => player.team === team && player !== taker && !player.isSentOff && player.role !== 'GK')
+        || this.players.find(player => player.team === team && player !== taker && !player.isSentOff);
       if (support) {
         const offsetX = team === Team.HOME ? -90 : 90;
         support.pos = new Vector2D(
@@ -1466,7 +1735,7 @@ export class GameEngine {
       }
 
       this.players.forEach(player => {
-        if (player.team !== team && player.pos.dist(spot) < 140) {
+        if (!player.isSentOff && player.team !== team && player.pos.dist(spot) < 140) {
           const pushX = team === Team.HOME ? 150 : -150;
           player.pos = new Vector2D(
             Math.max(40, Math.min(W - 40, spot.x + pushX)),
@@ -1479,11 +1748,12 @@ export class GameEngine {
 
   private getRestartTaker(team: Team, type: RestartType, spot: Vector2D) {
       if (type === 'GOAL KICK') {
-        return this.players.find(player => player.team === team && player.role === 'GK') || this.players[this.activePlayerIndices[team]];
+        return this.players.find(player => player.team === team && player.role === 'GK' && !player.isSentOff)
+          || this.players.find(player => player.team === team && !player.isSentOff)!;
       }
 
       return this.players
-        .filter(player => player.team === team && player.role !== 'GK')
+        .filter(player => player.team === team && player.role !== 'GK' && !player.isSentOff)
         .sort((a, b) => a.pos.dist(spot) - b.pos.dist(spot))[0] || this.players[this.activePlayerIndices[team]];
   }
 }

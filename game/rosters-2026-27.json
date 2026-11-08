@@ -1,0 +1,1302 @@
+{
+  "source": "ESPN Soccer team roster API",
+  "retrievedAt": "2026-11-08T12:03:44.772Z",
+  "teams": {
+    "real-madrid": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Thibaut Courtois", "number": 1, "role": "GK" },
+        { "name": "Andriy Lunin", "number": 13, "role": "GK" },
+        { "name": "Fran González", "number": 25, "role": "GK" },
+        { "name": "Dani Carvajal", "number": 2, "role": "DEF" },
+        { "name": "Éder Militão", "number": 3, "role": "DEF" },
+        { "name": "Antonio Rüdiger", "number": 22, "role": "DEF" },
+        { "name": "Ferland Mendy", "number": 23, "role": "DEF" },
+        { "name": "Jude Bellingham", "number": 5, "role": "MID" },
+        { "name": "Federico Valverde", "number": 8, "role": "MID" },
+        { "name": "Aurelien Tchouameni", "number": 14, "role": "MID" },
+        { "name": "Kylian Mbappé", "number": 9, "role": "FWD" },
+        { "name": "Vinícius Júnior", "number": 7, "role": "FWD" },
+        { "name": "Rodrygo", "number": 11, "role": "FWD" }
+      ]
+    },
+    "barcelona": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Wojciech Szczesny", "number": 13, "role": "GK" },
+        { "name": "Joan García", "number": 1, "role": "GK" },
+        { "name": "Iñaki Peña", "number": 33, "role": "GK" },
+        { "name": "Ronald Araújo", "number": 4, "role": "DEF" },
+        { "name": "Pau Cubarsí", "number": 33, "role": "DEF" },
+        { "name": "Alejandro Balde", "number": 3, "role": "DEF" },
+        { "name": "Jules Koundé", "number": 23, "role": "DEF" },
+        { "name": "Pedri", "number": 8, "role": "MID" },
+        { "name": "Gavi", "number": 6, "role": "MID" },
+        { "name": "Frenkie de Jong", "number": 21, "role": "MID" },
+        { "name": "Lamine Yamal", "number": 19, "role": "FWD" },
+        { "name": "Raphinha", "number": 11, "role": "FWD" },
+        { "name": "Robert Lewandowski", "number": 9, "role": "FWD" }
+      ]
+    },
+    "atletico": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Jan Oblak", "number": 13, "role": "GK" },
+        { "name": "Juan Musso", "number": 1, "role": "GK" },
+        { "name": "Ivo Grbic", "number": 25, "role": "GK" },
+        { "name": "Robin Le Normand", "number": 24, "role": "DEF" },
+        { "name": "Dávid Hancko", "number": 17, "role": "DEF" },
+        { "name": "José María Giménez", "number": 2, "role": "DEF" },
+        { "name": "Reinildo Mandava", "number": 6, "role": "DEF" },
+        { "name": "Rodrigo De Paul", "number": 5, "role": "MID" },
+        { "name": "Koke", "number": 6, "role": "MID" },
+        { "name": "Marcos Llorente", "number": 14, "role": "MID" },
+        { "name": "Alexander Sørloth", "number": 9, "role": "FWD" },
+        { "name": "Giuliano Simeone", "number": 17, "role": "FWD" },
+        { "name": "Ángel Correa", "number": 10, "role": "FWD" }
+      ]
+    },
+    "girona": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Paulo Gazzaniga", "number": 13, "role": "GK" },
+        { "name": "Sergi Puig", "number": 1, "role": "GK" },
+        { "name": "Vladyslav Krapyvtsov", "number": 25, "role": "GK" },
+        { "name": "Daley Blind", "number": 5, "role": "DEF" },
+        { "name": "Álex Moreno", "number": 11, "role": "DEF" },
+        { "name": "David López", "number": 4, "role": "DEF" },
+        { "name": "Mateu Morey", "number": 3, "role": "DEF" },
+        { "name": "Yangel Herrera", "number": 21, "role": "MID" },
+        { "name": "Oriol Romeu", "number": 8, "role": "MID" },
+        { "name": "Donny van de Beek", "number": 6, "role": "MID" },
+        { "name": "Cristhian Stuani", "number": 7, "role": "FWD" },
+        { "name": "Portu", "number": 10, "role": "FWD" },
+        { "name": "Bryan Gil", "number": 19, "role": "FWD" }
+      ]
+    },
+    "sevilla": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Orjan Nyland", "number": 1, "role": "GK" },
+        { "name": "Álvaro Fernández", "number": 13, "role": "GK" },
+        { "name": "Fran González", "number": 33, "role": "GK" },
+        { "name": "Marcos Acuña", "number": 19, "role": "DEF" },
+        { "name": "Tanguy Nianzou", "number": 23, "role": "DEF" },
+        { "name": "Gabriel Silva", "number": 2, "role": "DEF" },
+        { "name": "Jesús Navas", "number": 16, "role": "DEF" },
+        { "name": "Ivan Rakitic", "number": 10, "role": "MID" },
+        { "name": "Joan Jordán", "number": 8, "role": "MID" },
+        { "name": "Suso", "number": 11, "role": "MID" },
+        { "name": "Youssef En-Nesyri", "number": 15, "role": "FWD" },
+        { "name": "Lucas Ocampos", "number": 5, "role": "FWD" },
+        { "name": "Dodi Lukébakio", "number": 7, "role": "FWD" }
+      ]
+    },
+    "valencia": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Giorgi Mamardashvili", "number": 1, "role": "GK" },
+        { "name": "Stole Dimitrievski", "number": 25, "role": "GK" },
+        { "name": "Jesús Rueda", "number": 13, "role": "GK" },
+        { "name": "José Gayà", "number": 14, "role": "DEF" },
+        { "name": "Mouctar Diakhaby", "number": 5, "role": "DEF" },
+        { "name": "Jesús Vázquez", "number": 21, "role": "DEF" },
+        { "name": "Thierry Correia", "number": 11, "role": "DEF" },
+        { "name": "Hugo Guillamon", "number": 20, "role": "MID" },
+        { "name": "Javi Guerra", "number": 8, "role": "MID" },
+        { "name": "Pepelu", "number": 18, "role": "MID" },
+        { "name": "Hugo Duro", "number": 9, "role": "FWD" },
+        { "name": "Dani Gómez", "number": 7, "role": "FWD" },
+        { "name": "Samuel Lino", "number": 17, "role": "FWD" }
+      ]
+    },
+    "real-sociedad": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Álex Remiro", "number": 1, "role": "GK" },
+        { "name": "Unai Marrero", "number": 13, "role": "GK" },
+        { "name": "Aitor Fraga", "number": 32, "role": "GK" },
+        { "name": "Igor Zubeldia", "number": 5, "role": "DEF" },
+        { "name": "Álvaro Odriozola", "number": 20, "role": "DEF" },
+        { "name": "Aihen Muñoz", "number": 3, "role": "DEF" },
+        { "name": "Jon Pacheco", "number": 16, "role": "DEF" },
+        { "name": "Mikel Merino", "number": 24, "role": "MID" },
+        { "name": "Brais Méndez", "number": 10, "role": "MID" },
+        { "name": "Beñat Turrientes", "number": 8, "role": "MID" },
+        { "name": "Mikel Oyarzabal", "number": 10, "role": "FWD" },
+        { "name": "Takefusa Kubo", "number": 18, "role": "FWD" },
+        { "name": "Mohamed-Ali Cho", "number": 17, "role": "FWD" }
+      ]
+    },
+    "athletic-club": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Unai Simón", "number": 1, "role": "GK" },
+        { "name": "Álex Padilla", "number": 13, "role": "GK" },
+        { "name": "Julen Agirrezabala", "number": 25, "role": "GK" },
+        { "name": "Dani Vivian", "number": 3, "role": "DEF" },
+        { "name": "Yeray Álvarez", "number": 5, "role": "DEF" },
+        { "name": "Yuri Berchiche", "number": 17, "role": "DEF" },
+        { "name": "Oscar de Marcos", "number": 2, "role": "DEF" },
+        { "name": "Oihan Sancet", "number": 8, "role": "MID" },
+        { "name": "Iker Muniain", "number": 10, "role": "MID" },
+        { "name": "Beñat Prados", "number": 6, "role": "MID" },
+        { "name": "Iñaki Williams", "number": 9, "role": "FWD" },
+        { "name": "Gorka Guruzeta", "number": 11, "role": "FWD" },
+        { "name": "Álex Berenguer", "number": 7, "role": "FWD" }
+      ]
+    },
+    "real-betis": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Rui Silva", "number": 13, "role": "GK" },
+        { "name": "Álvaro Valles", "number": 1, "role": "GK" },
+        { "name": "Fran González", "number": 25, "role": "GK" },
+        { "name": "Marc Bartra", "number": 5, "role": "DEF" },
+        { "name": "Germán Pezzella", "number": 4, "role": "DEF" },
+        { "name": "Álex Moreno", "number": 15, "role": "DEF" },
+        { "name": "Héctor Bellerín", "number": 2, "role": "DEF" },
+        { "name": "Isco", "number": 22, "role": "MID" },
+        { "name": "Dani Ceballos", "number": 25, "role": "MID" },
+        { "name": "Guido Rodríguez", "number": 14, "role": "MID" },
+        { "name": "Ayoze Pérez", "number": 7, "role": "FWD" },
+        { "name": "Antony", "number": 11, "role": "FWD" },
+        { "name": "Borja Iglesias", "number": 9, "role": "FWD" }
+      ]
+    },
+    "villarreal": {
+      "season": "2026-27 Spanish LALIGA",
+      "players": [
+        { "name": "Pepe Reina", "number": 25, "role": "GK" },
+        { "name": "Filip Jørgensen", "number": 1, "role": "GK" },
+        { "name": "Rubén Gómez", "number": 13, "role": "GK" },
+        { "name": "Juan Foyth", "number": 8, "role": "DEF" },
+        { "name": "Pau Torres", "number": 5, "role": "DEF" },
+        { "name": "Alfonso Pedraza", "number": 15, "role": "DEF" },
+        { "name": "Logan Costa", "number": 2, "role": "DEF" },
+        { "name": "Dani Parejo", "number": 10, "role": "MID" },
+        { "name": "Santi Comesaña", "number": 14, "role": "MID" },
+        { "name": "Alex Baena", "number": 19, "role": "MID" },
+        { "name": "Gerard Moreno", "number": 7, "role": "FWD" },
+        { "name": "Ayoze Pérez", "number": 22, "role": "FWD" },
+        { "name": "Samuel Chukwueze", "number": 11, "role": "FWD" }
+      ]
+    },
+    "man-city": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Ederson", "number": 31, "role": "GK" },
+        { "name": "Stefan Ortega", "number": 18, "role": "GK" },
+        { "name": "Scott Carson", "number": 33, "role": "GK" },
+        { "name": "Rúben Dias", "number": 3, "role": "DEF" },
+        { "name": "Josko Gvardiol", "number": 24, "role": "DEF" },
+        { "name": "Manuel Akanji", "number": 25, "role": "DEF" },
+        { "name": "Kyle Walker", "number": 2, "role": "DEF" },
+        { "name": "Rodri", "number": 16, "role": "MID" },
+        { "name": "Mateo Kovacic", "number": 8, "role": "MID" },
+        { "name": "Kevin De Bruyne", "number": 17, "role": "MID" },
+        { "name": "Erling Haaland", "number": 9, "role": "FWD" },
+        { "name": "Jeremy Doku", "number": 11, "role": "FWD" },
+        { "name": "Phil Foden", "number": 47, "role": "FWD" }
+      ]
+    },
+    "liverpool": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Alisson Becker", "number": 1, "role": "GK" },
+        { "name": "Caoimhín Kelleher", "number": 62, "role": "GK" },
+        { "name": "Vitezslav Jaros", "number": 28, "role": "GK" },
+        { "name": "Virgil van Dijk", "number": 4, "role": "DEF" },
+        { "name": "Andy Robertson", "number": 26, "role": "DEF" },
+        { "name": "Ibrahima Konaté", "number": 5, "role": "DEF" },
+        { "name": "Joe Gomez", "number": 2, "role": "DEF" },
+        { "name": "Alexis Mac Allister", "number": 10, "role": "MID" },
+        { "name": "Ryan Gravenberch", "number": 38, "role": "MID" },
+        { "name": "Dominik Szoboszlai", "number": 8, "role": "MID" },
+        { "name": "Mohamed Salah", "number": 11, "role": "FWD" },
+        { "name": "Cody Gakpo", "number": 18, "role": "FWD" },
+        { "name": "Darwin Núñez", "number": 9, "role": "FWD" }
+      ]
+    },
+    "arsenal": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "David Raya", "number": 1, "role": "GK" },
+        { "name": "Karl Hein", "number": 22, "role": "GK" },
+        { "name": "Aaron Ramsdale", "number": 32, "role": "GK" },
+        { "name": "William Saliba", "number": 2, "role": "DEF" },
+        { "name": "Gabriel Magalhães", "number": 6, "role": "DEF" },
+        { "name": "Ben White", "number": 4, "role": "DEF" },
+        { "name": "Riccardo Calafiori", "number": 33, "role": "DEF" },
+        { "name": "Martin Ødegaard", "number": 8, "role": "MID" },
+        { "name": "Declan Rice", "number": 41, "role": "MID" },
+        { "name": "Mikel Merino", "number": 23, "role": "MID" },
+        { "name": "Bukayo Saka", "number": 7, "role": "FWD" },
+        { "name": "Gabriel Martinelli", "number": 11, "role": "FWD" },
+        { "name": "Kai Havertz", "number": 29, "role": "FWD" }
+      ]
+    },
+    "chelsea": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Robert Sánchez", "number": 1, "role": "GK" },
+        { "name": "Filip Jørgensen", "number": 25, "role": "GK" },
+        { "name": "Djordje Petrovic", "number": 29, "role": "GK" },
+        { "name": "Reece James", "number": 24, "role": "DEF" },
+        { "name": "Wesley Fofana", "number": 3, "role": "DEF" },
+        { "name": "Levi Colwill", "number": 6, "role": "DEF" },
+        { "name": "Marc Cucurella", "number": 32, "role": "DEF" },
+        { "name": "Moisés Caicedo", "number": 25, "role": "MID" },
+        { "name": "Enzo Fernández", "number": 8, "role": "MID" },
+        { "name": "Cole Palmer", "number": 20, "role": "MID" },
+        { "name": "Pedro Neto", "number": 7, "role": "FWD" },
+        { "name": "Nicolas Jackson", "number": 15, "role": "FWD" },
+        { "name": "João Pedro", "number": 9, "role": "FWD" }
+      ]
+    },
+    "man-united": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "André Onana", "number": 24, "role": "GK" },
+        { "name": "Altay Bayindir", "number": 1, "role": "GK" },
+        { "name": "Tom Heaton", "number": 22, "role": "GK" },
+        { "name": "Noussair Mazraoui", "number": 3, "role": "DEF" },
+        { "name": "Lisandro Martínez", "number": 6, "role": "DEF" },
+        { "name": "Matthijs de Ligt", "number": 4, "role": "DEF" },
+        { "name": "Diogo Dalot", "number": 2, "role": "DEF" },
+        { "name": "Manuel Ugarte", "number": 15, "role": "MID" },
+        { "name": "Kobbie Mainoo", "number": 37, "role": "MID" },
+        { "name": "Bruno Fernandes", "number": 8, "role": "MID" },
+        { "name": "Rasmus Hojlund", "number": 11, "role": "FWD" },
+        { "name": "Marcus Rashford", "number": 10, "role": "FWD" },
+        { "name": "Joshua Zirkzee", "number": 9, "role": "FWD" }
+      ]
+    },
+    "tottenham": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Guglielmo Vicario", "number": 1, "role": "GK" },
+        { "name": "Antonín Kinsky", "number": 31, "role": "GK" },
+        { "name": "Brandon Austin", "number": 40, "role": "GK" },
+        { "name": "Pedro Porro", "number": 23, "role": "DEF" },
+        { "name": "Micky van de Ven", "number": 37, "role": "DEF" },
+        { "name": "Cristian Romero", "number": 17, "role": "DEF" },
+        { "name": "Destiny Udogie", "number": 38, "role": "DEF" },
+        { "name": "Yves Bissouma", "number": 29, "role": "MID" },
+        { "name": "James Maddison", "number": 10, "role": "MID" },
+        { "name": "Sandro Tonali", "number": 16, "role": "MID" },
+        { "name": "Son Heung-Min", "number": 7, "role": "FWD" },
+        { "name": "Dominic Solanke", "number": 19, "role": "FWD" },
+        { "name": "Brennan Johnson", "number": 22, "role": "FWD" }
+      ]
+    },
+    "newcastle": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Nick Pope", "number": 1, "role": "GK" },
+        { "name": "Martin Dúbravka", "number": 22, "role": "GK" },
+        { "name": "Mark Gillespie", "number": 29, "role": "GK" },
+        { "name": "Kieran Trippier", "number": 2, "role": "DEF" },
+        { "name": "Sven Botman", "number": 4, "role": "DEF" },
+        { "name": "Fabian Schär", "number": 5, "role": "DEF" },
+        { "name": "Dan Burn", "number": 33, "role": "DEF" },
+        { "name": "Bruno Guimarães", "number": 39, "role": "MID" },
+        { "name": "Joelinton", "number": 7, "role": "MID" },
+        { "name": "Harvey Barnes", "number": 11, "role": "MID" },
+        { "name": "Alexander Isak", "number": 14, "role": "FWD" },
+        { "name": "Callum Wilson", "number": 9, "role": "FWD" },
+        { "name": "Anthony Gordon", "number": 10, "role": "FWD" }
+      ]
+    },
+    "aston-villa": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Emiliano Martínez", "number": 1, "role": "GK" },
+        { "name": "Robin Olsen", "number": 36, "role": "GK" },
+        { "name": "Jed Steer", "number": 23, "role": "GK" },
+        { "name": "Matty Cash", "number": 2, "role": "DEF" },
+        { "name": "Pau Torres", "number": 14, "role": "DEF" },
+        { "name": "Clément Lenglet", "number": 15, "role": "DEF" },
+        { "name": "Lucas Digne", "number": 12, "role": "DEF" },
+        { "name": "Youri Tielemans", "number": 8, "role": "MID" },
+        { "name": "John McGinn", "number": 7, "role": "MID" },
+        { "name": "Leon Bailey", "number": 31, "role": "MID" },
+        { "name": "Ollie Watkins", "number": 11, "role": "FWD" },
+        { "name": "Alejandro Garnacho", "number": 17, "role": "FWD" },
+        { "name": "Jhon Durán", "number": 19, "role": "FWD" }
+      ]
+    },
+    "west-ham": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Alphonse Areola", "number": 23, "role": "GK" },
+        { "name": "Łukasz Fabiański", "number": 1, "role": "GK" },
+        { "name": "Nathan Trott", "number": 44, "role": "GK" },
+        { "name": "Aaron Wan-Bissaka", "number": 29, "role": "DEF" },
+        { "name": "Max Kilman", "number": 3, "role": "DEF" },
+        { "name": "Angelo Ogbonna", "number": 21, "role": "DEF" },
+        { "name": "Emerson Palmieri", "number": 33, "role": "DEF" },
+        { "name": "Tomas Soucek", "number": 28, "role": "MID" },
+        { "name": "Edson Álvarez", "number": 4, "role": "MID" },
+        { "name": "Mohammed Kudus", "number": 14, "role": "MID" },
+        { "name": "Jarrod Bowen", "number": 20, "role": "FWD" },
+        { "name": "Niclas Füllkrug", "number": 9, "role": "FWD" },
+        { "name": "Crysencio Summerville", "number": 10, "role": "FWD" }
+      ]
+    },
+    "brighton": {
+      "season": "2026-27 English Premier League",
+      "players": [
+        { "name": "Bart Verbruggen", "number": 23, "role": "GK" },
+        { "name": "Jason Steele", "number": 1, "role": "GK" },
+        { "name": "Tom McGill", "number": 38, "role": "GK" },
+        { "name": "Lewis Dunk", "number": 5, "role": "DEF" },
+        { "name": "Joel Veltman", "number": 2, "role": "DEF" },
+        { "name": "Pervis Estupiñán", "number": 3, "role": "DEF" },
+        { "name": "Tariq Lamptey", "number": 2, "role": "DEF" },
+        { "name": "Billy Gilmour", "number": 17, "role": "MID" },
+        { "name": "Matt O'Riley", "number": 33, "role": "MID" },
+        { "name": "João Pedro", "number": 9, "role": "MID" },
+        { "name": "Georginio Rutter", "number": 10, "role": "FWD" },
+        { "name": "Simon Adingra", "number": 11, "role": "FWD" },
+        { "name": "Evan Ferguson", "number": 29, "role": "FWD" }
+      ]
+    },
+    "psg": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Gianluigi Donnarumma", "number": 99, "role": "GK" },
+        { "name": "Matvei Safonov", "number": 39, "role": "GK" },
+        { "name": "Alexandre Letellier", "number": 16, "role": "GK" },
+        { "name": "Achraf Hakimi", "number": 2, "role": "DEF" },
+        { "name": "Marquinhos", "number": 5, "role": "DEF" },
+        { "name": "Willian Pacho", "number": 45, "role": "DEF" },
+        { "name": "Nuno Mendes", "number": 25, "role": "DEF" },
+        { "name": "Fabián Ruiz", "number": 8, "role": "MID" },
+        { "name": "Vitinha", "number": 17, "role": "MID" },
+        { "name": "João Neves", "number": 87, "role": "MID" },
+        { "name": "Ousmane Dembélé", "number": 10, "role": "FWD" },
+        { "name": "Khvicha Kvaratskhelia", "number": 7, "role": "FWD" },
+        { "name": "Gonçalo Ramos", "number": 9, "role": "FWD" }
+      ]
+    },
+    "marseille": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Rubén Blanco", "number": 1, "role": "GK" },
+        { "name": "Pau López", "number": 16, "role": "GK" },
+        { "name": "Simon Ngapandouetnbu", "number": 30, "role": "GK" },
+        { "name": "Chancel Mbemba", "number": 25, "role": "DEF" },
+        { "name": "Leonardo Balerdi", "number": 5, "role": "DEF" },
+        { "name": "Jonathan Clauss", "number": 2, "role": "DEF" },
+        { "name": "Nuno Tavares", "number": 15, "role": "DEF" },
+        { "name": "Valentin Rongier", "number": 21, "role": "MID" },
+        { "name": "Pierre-Emile Højbjerg", "number": 23, "role": "MID" },
+        { "name": "Geoffrey Kondogbia", "number": 19, "role": "MID" },
+        { "name": "Amine Gouiri", "number": 9, "role": "FWD" },
+        { "name": "Elye Wahi", "number": 11, "role": "FWD" },
+        { "name": "Vitinha", "number": 7, "role": "FWD" }
+      ]
+    },
+    "monaco": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Radoslaw Majecki", "number": 16, "role": "GK" },
+        { "name": "Philipp Köhn", "number": 1, "role": "GK" },
+        { "name": "Jules Stawiecki", "number": 40, "role": "GK" },
+        { "name": "Thilo Kehrer", "number": 5, "role": "DEF" },
+        { "name": "Wilfried Singo", "number": 2, "role": "DEF" },
+        { "name": "Mohammed Salisu", "number": 22, "role": "DEF" },
+        { "name": "Caio Henrique", "number": 25, "role": "DEF" },
+        { "name": "Youssouf Fofana", "number": 24, "role": "MID" },
+        { "name": "Aleksandr Golovin", "number": 10, "role": "MID" },
+        { "name": "Lamine Camara", "number": 15, "role": "MID" },
+        { "name": "Folarin Balogun", "number": 9, "role": "FWD" },
+        { "name": "Breel Embolo", "number": 23, "role": "FWD" },
+        { "name": "Maghnes Akliouche", "number": 11, "role": "FWD" }
+      ]
+    },
+    "lyon": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Lucas Perri", "number": 1, "role": "GK" },
+        { "name": "Anthony Lopes", "number": 1, "role": "GK" },
+        { "name": "Rémy Descamps", "number": 40, "role": "GK" },
+        { "name": "Nicolás Tagliafico", "number": 3, "role": "DEF" },
+        { "name": "Jake O'Brien", "number": 15, "role": "DEF" },
+        { "name": "Duje Caleta-Car", "number": 24, "role": "DEF" },
+        { "name": "Saël Kumbedi", "number": 22, "role": "DEF" },
+        { "name": "Corentin Tolisso", "number": 8, "role": "MID" },
+        { "name": "Maxence Caqueret", "number": 23, "role": "MID" },
+        { "name": "Gift Orban", "number": 10, "role": "MID" },
+        { "name": "Rayan Cherki", "number": 18, "role": "FWD" },
+        { "name": "Malick Fofana", "number": 7, "role": "FWD" },
+        { "name": "Alexandre Lacazette", "number": 9, "role": "FWD" }
+      ]
+    },
+    "lille": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Lucas Chevalier", "number": 30, "role": "GK" },
+        { "name": "Yvon Mvogo", "number": 1, "role": "GK" },
+        { "name": "Léo Jardim", "number": 16, "role": "GK" },
+        { "name": "Alexsandro", "number": 55, "role": "DEF" },
+        { "name": "Tiago Santos", "number": 2, "role": "DEF" },
+        { "name": "Gabriel Gudmundsson", "number": 15, "role": "DEF" },
+        { "name": "Bafodé Diakité", "number": 24, "role": "DEF" },
+        { "name": "Benjamin André", "number": 21, "role": "MID" },
+        { "name": "Angel Gomes", "number": 10, "role": "MID" },
+        { "name": "Edon Zhegrova", "number": 7, "role": "MID" },
+        { "name": "Jonathan David", "number": 9, "role": "FWD" },
+        { "name": "Mohamed Bayo", "number": 11, "role": "FWD" },
+        { "name": "Rémy Cabella", "number": 8, "role": "FWD" }
+      ]
+    },
+    "nice": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Marcin Bulka", "number": 40, "role": "GK" },
+        { "name": "Yehvann Diouf", "number": 23, "role": "GK" },
+        { "name": "Martin Ponsot", "number": 60, "role": "GK" },
+        { "name": "Jonathan Clauss", "number": 92, "role": "DEF" },
+        { "name": "Jean-Clair Todibo", "number": 20, "role": "DEF" },
+        { "name": "Dante", "number": 25, "role": "DEF" },
+        { "name": "Melvin Bard", "number": 3, "role": "DEF" },
+        { "name": "Khéphren Thuram", "number": 29, "role": "MID" },
+        { "name": "Hicham Boudaoui", "number": 8, "role": "MID" },
+        { "name": "Terem Moffi", "number": 10, "role": "MID" },
+        { "name": "Gaëtan Laborde", "number": 9, "role": "FWD" },
+        { "name": "Evann Guessand", "number": 11, "role": "FWD" },
+        { "name": "Elye Wahi", "number": 7, "role": "FWD" }
+      ]
+    },
+    "lens": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Brice Samba", "number": 30, "role": "GK" },
+        { "name": "Rémy Descamps", "number": 1, "role": "GK" },
+        { "name": "Robin Risser", "number": 40, "role": "GK" },
+        { "name": "Jonathan Gradit", "number": 24, "role": "DEF" },
+        { "name": "Kevin Danso", "number": 15, "role": "DEF" },
+        { "name": "Ruben Aguilar", "number": 2, "role": "DEF" },
+        { "name": "Jean-Clair Todibo", "number": 20, "role": "DEF" },
+        { "name": "Salis Abdul Samed", "number": 28, "role": "MID" },
+        { "name": "Florian Sotoca", "number": 7, "role": "MID" },
+        { "name": "Przemyslaw Frankowski", "number": 95, "role": "MID" },
+        { "name": "Florian Thauvin", "number": 10, "role": "FWD" },
+        { "name": "Elye Wahi", "number": 11, "role": "FWD" },
+        { "name": "Lois Openda", "number": 9, "role": "FWD" }
+      ]
+    },
+    "rennes": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Steve Mandanda", "number": 30, "role": "GK" },
+        { "name": "Dogan Alemdar", "number": 1, "role": "GK" },
+        { "name": "Nicolas Lemaitre", "number": 16, "role": "GK" },
+        { "name": "Warmed Omari", "number": 24, "role": "DEF" },
+        { "name": "Arthur Theate", "number": 5, "role": "DEF" },
+        { "name": "Birger Meling", "number": 3, "role": "DEF" },
+        { "name": "Hamari Traoré", "number": 2, "role": "DEF" },
+        { "name": "Baptiste Santamaria", "number": 8, "role": "MID" },
+        { "name": "Flavien Tait", "number": 11, "role": "MID" },
+        { "name": "Amine Gouiri", "number": 10, "role": "MID" },
+        { "name": "Martin Terrier", "number": 7, "role": "FWD" },
+        { "name": "Arnaud Kalimuendo", "number": 9, "role": "FWD" },
+        { "name": "Kamaldeen Sulemana", "number": 29, "role": "FWD" }
+      ]
+    },
+    "reims": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Yehvann Diouf", "number": 1, "role": "GK" },
+        { "name": "Predrag Rajkovic", "number": 30, "role": "GK" },
+        { "name": "Mathieu Dreyer", "number": 16, "role": "GK" },
+        { "name": "Emmanuel Agbadou", "number": 5, "role": "DEF" },
+        { "name": "Wout Faes", "number": 4, "role": "DEF" },
+        { "name": "Andrew Gravillon", "number": 2, "role": "DEF" },
+        { "name": "Kasim Adams", "number": 24, "role": "DEF" },
+        { "name": "Jens Cajuste", "number": 8, "role": "MID" },
+        { "name": "Moreto Cassama", "number": 25, "role": "MID" },
+        { "name": "Amadou Koné", "number": 23, "role": "MID" },
+        { "name": "Folarin Balogun", "number": 9, "role": "FWD" },
+        { "name": "Mitchell van Bergen", "number": 11, "role": "FWD" },
+        { "name": "Maxime Busi", "number": 7, "role": "FWD" }
+      ]
+    },
+    "strasbourg": {
+      "season": "2026-27 French Ligue 1",
+      "players": [
+        { "name": "Matz Sels", "number": 1, "role": "GK" },
+        { "name": "Thess Roininen", "number": 12, "role": "GK" },
+        { "name": "Gabriel Kerckaert", "number": 60, "role": "GK" },
+        { "name": "Lionel Carole", "number": 3, "role": "DEF" },
+        { "name": "Alexander Djiku", "number": 24, "role": "DEF" },
+        { "name": "Gerzino Nyamsi", "number": 5, "role": "DEF" },
+        { "name": "Kevin Gameiro", "number": 15, "role": "DEF" },
+        { "name": "Jessy Deminguet", "number": 8, "role": "MID" },
+        { "name": "Sanjin Prcic", "number": 10, "role": "MID" },
+        { "name": "Nordine Kandil", "number": 23, "role": "MID" },
+        { "name": "Ludovic Ajorque", "number": 9, "role": "FWD" },
+        { "name": "Habib Diallo", "number": 7, "role": "FWD" },
+        { "name": "Ibrahima Sissoko", "number": 11, "role": "FWD" }
+      ]
+    },
+    "inter": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Yann Sommer", "number": 1, "role": "GK" },
+        { "name": "Josep Martinez", "number": 97, "role": "GK" },
+        { "name": "Raffaele Di Gennaro", "number": 12, "role": "GK" },
+        { "name": "Benjamin Pavard", "number": 28, "role": "DEF" },
+        { "name": "Alessandro Bastoni", "number": 95, "role": "DEF" },
+        { "name": "Federico Dimarco", "number": 32, "role": "DEF" },
+        { "name": "Yann Aurel Bisseck", "number": 31, "role": "DEF" },
+        { "name": "Hakan Çalhanoglu", "number": 20, "role": "MID" },
+        { "name": "Henrikh Mkhitaryan", "number": 22, "role": "MID" },
+        { "name": "Piotr Zielinski", "number": 7, "role": "MID" },
+        { "name": "Lautaro Martínez", "number": 10, "role": "FWD" },
+        { "name": "Marcus Thuram", "number": 9, "role": "FWD" },
+        { "name": "Mehdi Taremi", "number": 99, "role": "FWD" }
+      ]
+    },
+    "milan": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Mike Maignan", "number": 16, "role": "GK" },
+        { "name": "Marco Sportiello", "number": 57, "role": "GK" },
+        { "name": "Lorenzo Torriani", "number": 96, "role": "GK" },
+        { "name": "Davide Calabria", "number": 2, "role": "DEF" },
+        { "name": "Fikayo Tomori", "number": 23, "role": "DEF" },
+        { "name": "Strahinja Pavlovic", "number": 31, "role": "DEF" },
+        { "name": "Theo Hernandez", "number": 19, "role": "DEF" },
+        { "name": "Youssouf Fofana", "number": 29, "role": "MID" },
+        { "name": "Tijjani Reijnders", "number": 14, "role": "MID" },
+        { "name": "Ruben Loftus-Cheek", "number": 8, "role": "MID" },
+        { "name": "Álvaro Morata", "number": 7, "role": "FWD" },
+        { "name": "Rafael Leão", "number": 10, "role": "FWD" },
+        { "name": "Noah Okafor", "number": 17, "role": "FWD" }
+      ]
+    },
+    "juventus": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Michele Di Gregorio", "number": 1, "role": "GK" },
+        { "name": "Mattia Perin", "number": 36, "role": "GK" },
+        { "name": "Carlo Pinsoglio", "number": 23, "role": "GK" },
+        { "name": "Andrea Cambiaso", "number": 27, "role": "DEF" },
+        { "name": "Federico Gatti", "number": 15, "role": "DEF" },
+        { "name": "Gleison Bremer", "number": 3, "role": "DEF" },
+        { "name": "Danilo", "number": 13, "role": "DEF" },
+        { "name": "Manuel Locatelli", "number": 5, "role": "MID" },
+        { "name": "Teun Koopmeiners", "number": 8, "role": "MID" },
+        { "name": "Weston McKennie", "number": 16, "role": "MID" },
+        { "name": "Kenan Yildiz", "number": 10, "role": "FWD" },
+        { "name": "Dušan Vlahović", "number": 9, "role": "FWD" },
+        { "name": "Timothy Weah", "number": 22, "role": "FWD" }
+      ]
+    },
+    "napoli": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Alex Meret", "number": 1, "role": "GK" },
+        { "name": "Pierluigi Gollini", "number": 95, "role": "GK" },
+        { "name": "Elia Caprile", "number": 29, "role": "GK" },
+        { "name": "Giovanni Di Lorenzo", "number": 22, "role": "DEF" },
+        { "name": "Amir Rrahmani", "number": 13, "role": "DEF" },
+        { "name": "Leonardo Spinazzola", "number": 37, "role": "DEF" },
+        { "name": "Mathias Olivera", "number": 17, "role": "DEF" },
+        { "name": "Stanislav Lobotka", "number": 68, "role": "MID" },
+        { "name": "Scott McTominay", "number": 8, "role": "MID" },
+        { "name": "Khvicha Kvaratskhelia", "number": 77, "role": "MID" },
+        { "name": "Victor Osimhen", "number": 9, "role": "FWD" },
+        { "name": "David Neres", "number": 7, "role": "FWD" },
+        { "name": "Giacomo Raspadori", "number": 81, "role": "FWD" }
+      ]
+    },
+    "roma": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Mile Svilar", "number": 99, "role": "GK" },
+        { "name": "Pierluigi Gollini", "number": 95, "role": "GK" },
+        { "name": "Rémy Descamps", "number": 32, "role": "GK" },
+        { "name": "Zeki Çelik", "number": 37, "role": "DEF" },
+        { "name": "Evan Ndicka", "number": 5, "role": "DEF" },
+        { "name": "Gianluca Mancini", "number": 23, "role": "DEF" },
+        { "name": "Leonardo Spinazzola", "number": 3, "role": "DEF" },
+        { "name": "Bryan Cristante", "number": 4, "role": "MID" },
+        { "name": "Lorenzo Pellegrini", "number": 7, "role": "MID" },
+        { "name": "Leandro Paredes", "number": 16, "role": "MID" },
+        { "name": "Paulo Dybala", "number": 21, "role": "FWD" },
+        { "name": "Romelu Lukaku", "number": 11, "role": "FWD" },
+        { "name": "Stephan El Shaarawy", "number": 92, "role": "FWD" }
+      ]
+    },
+    "atalanta": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Marco Carnesecchi", "number": 29, "role": "GK" },
+        { "name": "Francesco Rossi", "number": 31, "role": "GK" },
+        { "name": "Marco Sportiello", "number": 57, "role": "GK" },
+        { "name": "Rafael Tolói", "number": 2, "role": "DEF" },
+        { "name": "Sead Kolasinac", "number": 23, "role": "DEF" },
+        { "name": "Raoul Bellanova", "number": 16, "role": "DEF" },
+        { "name": "Davide Zappacosta", "number": 77, "role": "DEF" },
+        { "name": "Mario Pasalic", "number": 8, "role": "MID" },
+        { "name": "Teun Koopmeiners", "number": 7, "role": "MID" },
+        { "name": "Marten de Roon", "number": 15, "role": "MID" },
+        { "name": "Gianluca Scamacca", "number": 9, "role": "FWD" },
+        { "name": "Ademola Lookman", "number": 11, "role": "FWD" },
+        { "name": "Charles De Ketelaere", "number": 17, "role": "FWD" }
+      ]
+    },
+    "lazio": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Ivan Provedel", "number": 94, "role": "GK" },
+        { "name": "Christos Mandas", "number": 35, "role": "GK" },
+        { "name": "Alessio Furlanetto", "number": 55, "role": "GK" },
+        { "name": "Adam Marusic", "number": 77, "role": "DEF" },
+        { "name": "Gila", "number": 55, "role": "DEF" },
+        { "name": "Alessio Romagnoli", "number": 13, "role": "DEF" },
+        { "name": "Luca Pellegrini", "number": 3, "role": "DEF" },
+        { "name": "Mattia Zaccagni", "number": 10, "role": "MID" },
+        { "name": "Daichi Kamada", "number": 27, "role": "MID" },
+        { "name": "Luis Alberto", "number": 10, "role": "MID" },
+        { "name": "Ciro Immobile", "number": 17, "role": "FWD" },
+        { "name": "Pedro", "number": 9, "role": "FWD" },
+        { "name": "Gustav Isaksen", "number": 11, "role": "FWD" }
+      ]
+    },
+    "fiorentina": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "David de Gea", "number": 1, "role": "GK" },
+        { "name": "Pietro Terracciano", "number": 43, "role": "GK" },
+        { "name": "Oliver Christensen", "number": 53, "role": "GK" },
+        { "name": "Dodo", "number": 2, "role": "DEF" },
+        { "name": "Marin Pongracic", "number": 5, "role": "DEF" },
+        { "name": "Luca Ranieri", "number": 6, "role": "DEF" },
+        { "name": "Fabiano Parisi", "number": 55, "role": "DEF" },
+        { "name": "Rolando Mandragora", "number": 38, "role": "MID" },
+        { "name": "Sofyan Amrabat", "number": 34, "role": "MID" },
+        { "name": "Arthur Melo", "number": 10, "role": "MID" },
+        { "name": "Jonathan Ikoné", "number": 11, "role": "FWD" },
+        { "name": "Riccardo Sottil", "number": 7, "role": "FWD" },
+        { "name": "Luca Jovic", "number": 9, "role": "FWD" }
+      ]
+    },
+    "bologna": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Lukasz Skorupski", "number": 1, "role": "GK" },
+        { "name": "Nicola Ravaglia", "number": 25, "role": "GK" },
+        { "name": "Lucasz Skorupski", "number": 36, "role": "GK" },
+        { "name": "Lhéritier Thiago", "number": 36, "role": "DEF" },
+        { "name": "Sam Beukema", "number": 23, "role": "DEF" },
+        { "name": "Riccardo Calafiori", "number": 33, "role": "DEF" },
+        { "name": "Charalampos Lykogiannis", "number": 5, "role": "DEF" },
+        { "name": "Lewis Ferguson", "number": 19, "role": "MID" },
+        { "name": "Remo Freuler", "number": 11, "role": "MID" },
+        { "name": "Tommaso Pobega", "number": 4, "role": "MID" },
+        { "name": "Riccardo Orsolini", "number": 7, "role": "FWD" },
+        { "name": "Joshua Zirkzee", "number": 9, "role": "FWD" },
+        { "name": "Alejandro Garnacho", "number": 15, "role": "FWD" }
+      ]
+    },
+    "torino": {
+      "season": "2026-27 Italian Serie A",
+      "players": [
+        { "name": "Vanja Milinkovic-Savic", "number": 32, "role": "GK" },
+        { "name": "Luca Gemello", "number": 25, "role": "GK" },
+        { "name": "Zion Suzuki", "number": 23, "role": "GK" },
+        { "name": "Ricardo Rodriguez", "number": 13, "role": "DEF" },
+        { "name": "Alessandro Buongiorno", "number": 4, "role": "DEF" },
+        { "name": "Saul Coco", "number": 5, "role": "DEF" },
+        { "name": "Mergim Vojvoda", "number": 7, "role": "DEF" },
+        { "name": "Ivan Ilic", "number": 10, "role": "MID" },
+        { "name": "Tomáš Pozpíšil", "number": 8, "role": "MID" },
+        { "name": "Nikola Vlasic", "number": 10, "role": "MID" },
+        { "name": "Antonio Sanabria", "number": 9, "role": "FWD" },
+        { "name": "Duvan Zapata", "number": 91, "role": "FWD" },
+        { "name": "Nemanja Radonjic", "number": 29, "role": "FWD" }
+      ]
+    },
+    "benfica": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Anatoliy Trubin", "number": 1, "role": "GK" },
+        { "name": "Samuel Soares", "number": 24, "role": "GK" },
+        { "name": "Diogo Ferreira", "number": 50, "role": "GK" },
+        { "name": "Alexander Bah", "number": 6, "role": "DEF" },
+        { "name": "Antonio Silva", "number": 4, "role": "DEF" },
+        { "name": "Nicolas Otamendi", "number": 30, "role": "DEF" },
+        { "name": "Álvaro Carreras", "number": 3, "role": "DEF" },
+        { "name": "João Palhinha", "number": 36, "role": "MID" },
+        { "name": "Fredrik Aursnes", "number": 8, "role": "MID" },
+        { "name": "Orkun Kökcü", "number": 10, "role": "MID" },
+        { "name": "Vangelis Pavlidis", "number": 14, "role": "FWD" },
+        { "name": "Dodi Lukébakio", "number": 11, "role": "FWD" },
+        { "name": "Petar Musa", "number": 9, "role": "FWD" }
+      ]
+    },
+    "porto": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Diogo Costa", "number": 99, "role": "GK" },
+        { "name": "Cláudio Ramos", "number": 14, "role": "GK" },
+        { "name": "João Costa", "number": 24, "role": "GK" },
+        { "name": "João Mário", "number": 5, "role": "DEF" },
+        { "name": "David Carmo", "number": 4, "role": "DEF" },
+        { "name": "Zaidu Sanusi", "number": 3, "role": "DEF" },
+        { "name": "Nehuen Perez", "number": 18, "role": "DEF" },
+        { "name": "Stephen Eustáquio", "number": 8, "role": "MID" },
+        { "name": "Alan Varela", "number": 20, "role": "MID" },
+        { "name": "Pepê", "number": 11, "role": "MID" },
+        { "name": "Mehdi Taremi", "number": 9, "role": "FWD" },
+        { "name": "Santiago Gimenez", "number": 29, "role": "FWD" },
+        { "name": "Galeno", "number": 13, "role": "FWD" }
+      ]
+    },
+    "sporting": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Antonio Adán", "number": 1, "role": "GK" },
+        { "name": "Franco Israel", "number": 41, "role": "GK" },
+        { "name": "Rui Silva", "number": 99, "role": "GK" },
+        { "name": "Pedro Porro", "number": 23, "role": "DEF" },
+        { "name": "Gonçalo Inácio", "number": 4, "role": "DEF" },
+        { "name": "Matheus Reis", "number": 5, "role": "DEF" },
+        { "name": "Jeremiah St. Juste", "number": 24, "role": "DEF" },
+        { "name": "Morten Hjulmand", "number": 8, "role": "MID" },
+        { "name": "Pedro Gonçalves", "number": 28, "role": "MID" },
+        { "name": "Daniel Bragança", "number": 10, "role": "MID" },
+        { "name": "Viktor Gyökeres", "number": 9, "role": "FWD" },
+        { "name": "Trincão", "number": 7, "role": "FWD" },
+        { "name": "Paulinho", "number": 11, "role": "FWD" }
+      ]
+    },
+    "braga": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Matheus", "number": 1, "role": "GK" },
+        { "name": "Tiago Sá", "number": 12, "role": "GK" },
+        { "name": "João Carvalho", "number": 78, "role": "GK" },
+        { "name": "Fabiano", "number": 2, "role": "DEF" },
+        { "name": "David Carmo", "number": 4, "role": "DEF" },
+        { "name": "Nuno Sequeira", "number": 3, "role": "DEF" },
+        { "name": "Rodrigo Gomes", "number": 22, "role": "DEF" },
+        { "name": "João Moutinho", "number": 8, "role": "MID" },
+        { "name": "Al Musrati", "number": 6, "role": "MID" },
+        { "name": "Simon Banza", "number": 9, "role": "MID" },
+        { "name": "Ricardo Horta", "number": 21, "role": "FWD" },
+        { "name": "Álvaro Djaló", "number": 10, "role": "FWD" },
+        { "name": "Vitinha", "number": 7, "role": "FWD" }
+      ]
+    },
+    "guimaraes": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Bruno Varela", "number": 1, "role": "GK" },
+        { "name": "Celton Biai", "number": 22, "role": "GK" },
+        { "name": "Lucas Furtado", "number": 98, "role": "GK" },
+        { "name": "Tomás Araujo", "number": 5, "role": "DEF" },
+        { "name": "Mumin", "number": 2, "role": "DEF" },
+        { "name": "Borevkovic", "number": 21, "role": "DEF" },
+        { "name": "Rafa Soares", "number": 3, "role": "DEF" },
+        { "name": "André André", "number": 10, "role": "MID" },
+        { "name": "Oscar Aranda", "number": 20, "role": "MID" },
+        { "name": "Ibrahima Bamba", "number": 16, "role": "MID" },
+        { "name": "Marcus Edwards", "number": 7, "role": "FWD" },
+        { "name": "Alfa Semedo", "number": 11, "role": "FWD" },
+        { "name": "Yaw Yeboah", "number": 9, "role": "FWD" }
+      ]
+    },
+    "boavista": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Bracali", "number": 1, "role": "GK" },
+        { "name": "César", "number": 99, "role": "GK" },
+        { "name": "João Gonçalves", "number": 31, "role": "GK" },
+        { "name": "Filipe Ferreira", "number": 20, "role": "DEF" },
+        { "name": "Chidozie Awaziem", "number": 5, "role": "DEF" },
+        { "name": "Rodrigo Abascal", "number": 2, "role": "DEF" },
+        { "name": "Hamidou Keyta", "number": 15, "role": "DEF" },
+        { "name": "Salvador Agra", "number": 7, "role": "MID" },
+        { "name": "Javi Garcia", "number": 8, "role": "MID" },
+        { "name": "Ibrahima Camara", "number": 6, "role": "MID" },
+        { "name": "Alberth Elis", "number": 11, "role": "FWD" },
+        { "name": "Musa", "number": 9, "role": "FWD" },
+        { "name": "Yusupha Njie", "number": 10, "role": "FWD" }
+      ]
+    },
+    "famalicao": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Rafael Defendi", "number": 1, "role": "GK" },
+        { "name": "Luiz Junior", "number": 25, "role": "GK" },
+        { "name": "Gabriel Cabral", "number": 22, "role": "GK" },
+        { "name": "Yaw Moses", "number": 3, "role": "DEF" },
+        { "name": "Roderick", "number": 2, "role": "DEF" },
+        { "name": "Álex Bernal", "number": 5, "role": "DEF" },
+        { "name": "Pedro Bondo", "number": 28, "role": "DEF" },
+        { "name": "Anderson", "number": 8, "role": "MID" },
+        { "name": "Marcos Peña", "number": 10, "role": "MID" },
+        { "name": "Rivaldo Lopes", "number": 23, "role": "MID" },
+        { "name": "Gil Dias", "number": 7, "role": "FWD" },
+        { "name": "Patrick", "number": 9, "role": "FWD" },
+        { "name": "Óscar Aranda", "number": 11, "role": "FWD" }
+      ]
+    },
+    "moreirense": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Pasinato", "number": 1, "role": "GK" },
+        { "name": "André Ferreira", "number": 13, "role": "GK" },
+        { "name": "Francisco Sampaio", "number": 12, "role": "GK" },
+        { "name": "João Aurélio", "number": 2, "role": "DEF" },
+        { "name": "Dinis Pinto", "number": 76, "role": "DEF" },
+        { "name": "Pedro Amador", "number": 5, "role": "DEF" },
+        { "name": "Ibrahima Guindo", "number": 6, "role": "DEF" },
+        { "name": "Steven Vitoria", "number": 4, "role": "MID" },
+        { "name": "Nile John", "number": 23, "role": "MID" },
+        { "name": "Kiko Bondoso", "number": 10, "role": "MID" },
+        { "name": "Derik Lacerda", "number": 11, "role": "FWD" },
+        { "name": "Rúben Rodrigues", "number": 9, "role": "FWD" },
+        { "name": "Yaw Yeboah", "number": 7, "role": "FWD" }
+      ]
+    },
+    "rio-ave": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Jhonatan", "number": 1, "role": "GK" },
+        { "name": "Kevin Chamorro", "number": 22, "role": "GK" },
+        { "name": "Ennio van der Gouw", "number": 99, "role": "GK" },
+        { "name": "Zé Carlos", "number": 2, "role": "DEF" },
+        { "name": "Eliaquim Mangala", "number": 5, "role": "DEF" },
+        { "name": "Pedro Amaral", "number": 24, "role": "DEF" },
+        { "name": "Nelson Abbey", "number": 6, "role": "DEF" },
+        { "name": "Amine Sarr", "number": 8, "role": "MID" },
+        { "name": "Carraça", "number": 7, "role": "MID" },
+        { "name": "Brandon Aguilera", "number": 10, "role": "MID" },
+        { "name": "Marios Vrousai", "number": 11, "role": "FWD" },
+        { "name": "Dario Spikic", "number": 77, "role": "FWD" },
+        { "name": "Gorka Guruzeta", "number": 9, "role": "FWD" }
+      ]
+    },
+    "estoril": {
+      "season": "2026-27 Portuguese Primeira Liga",
+      "players": [
+        { "name": "Andreas Linde", "number": 1, "role": "GK" },
+        { "name": "Joel Robles", "number": 16, "role": "GK" },
+        { "name": "Diogo Dias", "number": 23, "role": "GK" },
+        { "name": "Joãozinho", "number": 2, "role": "DEF" },
+        { "name": "Ferro", "number": 4, "role": "DEF" },
+        { "name": "Antef Tsoungui", "number": 5, "role": "DEF" },
+        { "name": "Pedro Rodrigues", "number": 25, "role": "DEF" },
+        { "name": "João Carvalho", "number": 12, "role": "MID" },
+        { "name": "Jordan Holsgrove", "number": 10, "role": "MID" },
+        { "name": "Vitor Gomes", "number": 8, "role": "MID" },
+        { "name": "Chidozie Ogbene", "number": 11, "role": "FWD" },
+        { "name": "Rodrigo Conceição", "number": 7, "role": "FWD" },
+        { "name": "Yaw Moses", "number": 9, "role": "FWD" }
+      ]
+    },
+    "france": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Mike Maignan", "number": 16, "role": "GK" },
+        { "name": "Brice Samba", "number": 1, "role": "GK" },
+        { "name": "Illan Meslier", "number": 23, "role": "GK" },
+        { "name": "Jules Koundé", "number": 5, "role": "DEF" },
+        { "name": "Dayot Upamecano", "number": 4, "role": "DEF" },
+        { "name": "Lucas Hernández", "number": 21, "role": "DEF" },
+        { "name": "Theo Hernandez", "number": 22, "role": "DEF" },
+        { "name": "N'Golo Kanté", "number": 13, "role": "MID" },
+        { "name": "Aurélien Tchouaméni", "number": 8, "role": "MID" },
+        { "name": "Adrien Rabiot", "number": 14, "role": "MID" },
+        { "name": "Kylian Mbappé", "number": 10, "role": "FWD" },
+        { "name": "Ousmane Dembélé", "number": 7, "role": "FWD" },
+        { "name": "Marcus Thuram", "number": 9, "role": "FWD" }
+      ]
+    },
+    "argentina": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Emiliano Martínez", "number": 23, "role": "GK" },
+        { "name": "Gerónimo Rulli", "number": 12, "role": "GK" },
+        { "name": "Walter Benítez", "number": 1, "role": "GK" },
+        { "name": "Cristian Romero", "number": 13, "role": "DEF" },
+        { "name": "Lisandro Martínez", "number": 6, "role": "DEF" },
+        { "name": "Nahuel Molina", "number": 26, "role": "DEF" },
+        { "name": "Nicolás Tagliafico", "number": 3, "role": "DEF" },
+        { "name": "Rodrigo De Paul", "number": 7, "role": "MID" },
+        { "name": "Leandro Paredes", "number": 5, "role": "MID" },
+        { "name": "Enzo Fernández", "number": 24, "role": "MID" },
+        { "name": "Lionel Messi", "number": 10, "role": "FWD" },
+        { "name": "Lautaro Martínez", "number": 22, "role": "FWD" },
+        { "name": "Álvaro Morata", "number": 11, "role": "FWD" }
+      ]
+    },
+    "brazil": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Alisson Becker", "number": 1, "role": "GK" },
+        { "name": "Weverton", "number": 12, "role": "GK" },
+        { "name": "Ederson", "number": 23, "role": "GK" },
+        { "name": "Marquinhos", "number": 4, "role": "DEF" },
+        { "name": "Éder Militão", "number": 3, "role": "DEF" },
+        { "name": "Danilo", "number": 13, "role": "DEF" },
+        { "name": "Alex Telles", "number": 6, "role": "DEF" },
+        { "name": "Bruno Guimarães", "number": 8, "role": "MID" },
+        { "name": "Lucas Paquetá", "number": 10, "role": "MID" },
+        { "name": "Rodrygo", "number": 19, "role": "MID" },
+        { "name": "Vinícius Júnior", "number": 7, "role": "FWD" },
+        { "name": "Raphinha", "number": 11, "role": "FWD" },
+        { "name": "Endrick", "number": 9, "role": "FWD" }
+      ]
+    },
+    "england": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Jordan Pickford", "number": 1, "role": "GK" },
+        { "name": "Dean Henderson", "number": 13, "role": "GK" },
+        { "name": "James Trafford", "number": 23, "role": "GK" },
+        { "name": "John Stones", "number": 5, "role": "DEF" },
+        { "name": "Reece James", "number": 24, "role": "DEF" },
+        { "name": "Kieran Trippier", "number": 12, "role": "DEF" },
+        { "name": "Marc Guehi", "number": 6, "role": "DEF" },
+        { "name": "Declan Rice", "number": 4, "role": "MID" },
+        { "name": "Jude Bellingham", "number": 22, "role": "MID" },
+        { "name": "Bukayo Saka", "number": 7, "role": "MID" },
+        { "name": "Harry Kane", "number": 9, "role": "FWD" },
+        { "name": "Ollie Watkins", "number": 19, "role": "FWD" },
+        { "name": "Phil Foden", "number": 11, "role": "FWD" }
+      ]
+    },
+    "spain": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "David Raya", "number": 1, "role": "GK" },
+        { "name": "Unai Simón", "number": 23, "role": "GK" },
+        { "name": "Joan García", "number": 13, "role": "GK" },
+        { "name": "Dani Carvajal", "number": 2, "role": "DEF" },
+        { "name": "Alejandro Grimaldo", "number": 3, "role": "DEF" },
+        { "name": "Robin Le Normand", "number": 24, "role": "DEF" },
+        { "name": "Aymeric Laporte", "number": 14, "role": "DEF" },
+        { "name": "Rodri", "number": 16, "role": "MID" },
+        { "name": "Pedri", "number": 26, "role": "MID" },
+        { "name": "Fabián Ruiz", "number": 8, "role": "MID" },
+        { "name": "Lamine Yamal", "number": 19, "role": "FWD" },
+        { "name": "Mikel Oyarzabal", "number": 21, "role": "FWD" },
+        { "name": "Álvaro Morata", "number": 7, "role": "FWD" }
+      ]
+    },
+    "germany": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Manuel Neuer", "number": 1, "role": "GK" },
+        { "name": "Oliver Baumann", "number": 12, "role": "GK" },
+        { "name": "Alexander Nübel", "number": 21, "role": "GK" },
+        { "name": "Antonio Rüdiger", "number": 2, "role": "DEF" },
+        { "name": "Jonathan Tah", "number": 4, "role": "DEF" },
+        { "name": "Waldemar Anton", "number": 3, "role": "DEF" },
+        { "name": "Maximilian Mittelstadt", "number": 18, "role": "DEF" },
+        { "name": "Joshua Kimmich", "number": 6, "role": "MID" },
+        { "name": "Florian Wirtz", "number": 10, "role": "MID" },
+        { "name": "Jamal Musiala", "number": 14, "role": "MID" },
+        { "name": "Kai Havertz", "number": 7, "role": "FWD" },
+        { "name": "Leroy Sané", "number": 19, "role": "FWD" },
+        { "name": "Niclas Füllkrug", "number": 9, "role": "FWD" }
+      ]
+    },
+    "italy": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Gianluigi Donnarumma", "number": 1, "role": "GK" },
+        { "name": "Guglielmo Vicario", "number": 30, "role": "GK" },
+        { "name": "Marco Carnesecchi", "number": 32, "role": "GK" },
+        { "name": "Alessandro Bastoni", "number": 23, "role": "DEF" },
+        { "name": "Riccardo Calafiori", "number": 36, "role": "DEF" },
+        { "name": "Giovanni Di Lorenzo", "number": 2, "role": "DEF" },
+        { "name": "Federico Dimarco", "number": 3, "role": "DEF" },
+        { "name": "Sandro Tonali", "number": 15, "role": "MID" },
+        { "name": "Nicolò Barella", "number": 18, "role": "MID" },
+        { "name": "Davide Frattesi", "number": 44, "role": "MID" },
+        { "name": "Gianluca Scamacca", "number": 9, "role": "FWD" },
+        { "name": "Federico Chiesa", "number": 7, "role": "FWD" },
+        { "name": "Giacomo Raspadori", "number": 11, "role": "FWD" }
+      ]
+    },
+    "portugal": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Diogo Costa", "number": 1, "role": "GK" },
+        { "name": "José Sá", "number": 12, "role": "GK" },
+        { "name": "Rui Silva", "number": 22, "role": "GK" },
+        { "name": "João Cancelo", "number": 20, "role": "DEF" },
+        { "name": "Rúben Dias", "number": 3, "role": "DEF" },
+        { "name": "Nélson Semedo", "number": 2, "role": "DEF" },
+        { "name": "Diogo Dalot", "number": 5, "role": "DEF" },
+        { "name": "Bruno Fernandes", "number": 8, "role": "MID" },
+        { "name": "Vitinha", "number": 16, "role": "MID" },
+        { "name": "Bernardo Silva", "number": 10, "role": "MID" },
+        { "name": "Cristiano Ronaldo", "number": 7, "role": "FWD" },
+        { "name": "Rafael Leão", "number": 17, "role": "FWD" },
+        { "name": "Pedro Neto", "number": 18, "role": "FWD" }
+      ]
+    },
+    "netherlands": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Bart Verbruggen", "number": 1, "role": "GK" },
+        { "name": "Mark Flekken", "number": 23, "role": "GK" },
+        { "name": "Robin Roefs", "number": 13, "role": "GK" },
+        { "name": "Virgil van Dijk", "number": 4, "role": "DEF" },
+        { "name": "Nathan Aké", "number": 5, "role": "DEF" },
+        { "name": "Denzel Dumfries", "number": 22, "role": "DEF" },
+        { "name": "Lutsharel Geertruida", "number": 2, "role": "DEF" },
+        { "name": "Frenkie de Jong", "number": 21, "role": "MID" },
+        { "name": "Tijjani Reijnders", "number": 14, "role": "MID" },
+        { "name": "Marten de Roon", "number": 15, "role": "MID" },
+        { "name": "Memphis Depay", "number": 10, "role": "FWD" },
+        { "name": "Cody Gakpo", "number": 11, "role": "FWD" },
+        { "name": "Donyell Malen", "number": 7, "role": "FWD" }
+      ]
+    },
+    "morocco": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Yassine Bounou", "number": 1, "role": "GK" },
+        { "name": "Ahmed Reda Tagnaouti", "number": 22, "role": "GK" },
+        { "name": "Munir El Kajoui", "number": 12, "role": "GK" },
+        { "name": "Achraf Hakimi", "number": 2, "role": "DEF" },
+        { "name": "Nayef Aguerd", "number": 5, "role": "DEF" },
+        { "name": "Noussair Mazraoui", "number": 3, "role": "DEF" },
+        { "name": "Jawad El Yamiq", "number": 6, "role": "DEF" },
+        { "name": "Sofyan Amrabat", "number": 4, "role": "MID" },
+        { "name": "Azzedine Ounahi", "number": 8, "role": "MID" },
+        { "name": "Brahim Díaz", "number": 10, "role": "MID" },
+        { "name": "Youssef En-Nesyri", "number": 9, "role": "FWD" },
+        { "name": "Hakim Ziyech", "number": 7, "role": "FWD" },
+        { "name": "Soufiane Rahimi", "number": 17, "role": "FWD" }
+      ]
+    },
+    "senegal": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Édouard Mendy", "number": 16, "role": "GK" },
+        { "name": "Mory Diaw", "number": 23, "role": "GK" },
+        { "name": "Yehvann Diouf", "number": 1, "role": "GK" },
+        { "name": "Kalidou Koulibaly", "number": 3, "role": "DEF" },
+        { "name": "Abdoulaye Seck", "number": 4, "role": "DEF" },
+        { "name": "Ismail Jakobs", "number": 14, "role": "DEF" },
+        { "name": "Moussa Niakhaté", "number": 19, "role": "DEF" },
+        { "name": "Idrissa Gueye", "number": 5, "role": "MID" },
+        { "name": "Pape Matar Sarr", "number": 8, "role": "MID" },
+        { "name": "Lamine Camara", "number": 15, "role": "MID" },
+        { "name": "Sadio Mané", "number": 10, "role": "FWD" },
+        { "name": "Ismaïla Sarr", "number": 18, "role": "FWD" },
+        { "name": "Nicolas Jackson", "number": 11, "role": "FWD" }
+      ]
+    },
+    "nigeria": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Stanley Nwabali", "number": 30, "role": "GK" },
+        { "name": "Francis Uzoho", "number": 1, "role": "GK" },
+        { "name": "Maduka Okoye", "number": 24, "role": "GK" },
+        { "name": "Ola Aina", "number": 2, "role": "DEF" },
+        { "name": "William Troost-Ekong", "number": 5, "role": "DEF" },
+        { "name": "Calvin Bassey", "number": 3, "role": "DEF" },
+        { "name": "Zaidu Sanusi", "number": 15, "role": "DEF" },
+        { "name": "Wilfred Ndidi", "number": 4, "role": "MID" },
+        { "name": "Alex Iwobi", "number": 17, "role": "MID" },
+        { "name": "Samuel Chukwueze", "number": 21, "role": "MID" },
+        { "name": "Victor Osimhen", "number": 9, "role": "FWD" },
+        { "name": "Kelechi Iheanacho", "number": 10, "role": "FWD" },
+        { "name": "Moses Simon", "number": 7, "role": "FWD" }
+      ]
+    },
+    "japan": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Zion Suzuki", "number": 1, "role": "GK" },
+        { "name": "Shuichi Gonda", "number": 12, "role": "GK" },
+        { "name": "Mitch Langerak", "number": 23, "role": "GK" },
+        { "name": "Hiroki Ito", "number": 5, "role": "DEF" },
+        { "name": "Takehiro Tomiyasu", "number": 22, "role": "DEF" },
+        { "name": "Ko Itakura", "number": 3, "role": "DEF" },
+        { "name": "Yuto Nagatomo", "number": 5, "role": "DEF" },
+        { "name": "Wataru Endo", "number": 6, "role": "MID" },
+        { "name": "Daichi Kamada", "number": 15, "role": "MID" },
+        { "name": "Ritsu Doan", "number": 10, "role": "MID" },
+        { "name": "Takefusa Kubo", "number": 8, "role": "FWD" },
+        { "name": "Junya Ito", "number": 14, "role": "FWD" },
+        { "name": "Ayase Ueda", "number": 19, "role": "FWD" }
+      ]
+    },
+    "south-korea": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Kim Seung-Gyu", "number": 1, "role": "GK" },
+        { "name": "Jo Hyeon-Woo", "number": 21, "role": "GK" },
+        { "name": "Song Bum-Keun", "number": 12, "role": "GK" },
+        { "name": "Kim Min-Jae", "number": 4, "role": "DEF" },
+        { "name": "Lee Tae-Seok", "number": 13, "role": "DEF" },
+        { "name": "Kim Moon-Hwan", "number": 15, "role": "DEF" },
+        { "name": "Kim Tae-Hyeon", "number": 5, "role": "DEF" },
+        { "name": "Lee Jae-Sung", "number": 10, "role": "MID" },
+        { "name": "Paik Seung-Ho", "number": 8, "role": "MID" },
+        { "name": "Cho Gue-Sung", "number": 20, "role": "MID" },
+        { "name": "Son Heung-Min", "number": 7, "role": "FWD" },
+        { "name": "Hwang Hee-Chan", "number": 11, "role": "FWD" },
+        { "name": "Hwang In-Beom", "number": 16, "role": "FWD" }
+      ]
+    },
+    "australia": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Mathew Ryan", "number": 1, "role": "GK" },
+        { "name": "Joe Gauci", "number": 23, "role": "GK" },
+        { "name": "Paul Izzo", "number": 12, "role": "GK" },
+        { "name": "Milos Degenek", "number": 2, "role": "DEF" },
+        { "name": "Harry Souttar", "number": 5, "role": "DEF" },
+        { "name": "Aziz Behich", "number": 16, "role": "DEF" },
+        { "name": "Jason Geria", "number": 6, "role": "DEF" },
+        { "name": "Jackson Irvine", "number": 22, "role": "MID" },
+        { "name": "Aaron Mooy", "number": 13, "role": "MID" },
+        { "name": "Riley McGree", "number": 10, "role": "MID" },
+        { "name": "Mathew Leckie", "number": 7, "role": "FWD" },
+        { "name": "Mitchell Duke", "number": 9, "role": "FWD" },
+        { "name": "Awer Mabil", "number": 11, "role": "FWD" }
+      ]
+    },
+    "new-zealand": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Max Crocombe", "number": 1, "role": "GK" },
+        { "name": "Michael Woud", "number": 22, "role": "GK" },
+        { "name": "Alex Paulsen", "number": 12, "role": "GK" },
+        { "name": "Michael Boxall", "number": 5, "role": "DEF" },
+        { "name": "Tommy Smith", "number": 26, "role": "DEF" },
+        { "name": "Tim Payne", "number": 2, "role": "DEF" },
+        { "name": "Francis de Vries", "number": 3, "role": "DEF" },
+        { "name": "Ryan Thomas", "number": 23, "role": "MID" },
+        { "name": "Alex Rufer", "number": 14, "role": "MID" },
+        { "name": "Callum McCowatt", "number": 20, "role": "MID" },
+        { "name": "Chris Wood", "number": 9, "role": "FWD" },
+        { "name": "Elijah Just", "number": 11, "role": "FWD" },
+        { "name": "Kosta Barbarouses", "number": 17, "role": "FWD" }
+      ]
+    },
+    "mexico": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Guillermo Ochoa", "number": 13, "role": "GK" },
+        { "name": "Carlos Acevedo", "number": 12, "role": "GK" },
+        { "name": "Raúl Rangel", "number": 1, "role": "GK" },
+        { "name": "Jorge Sánchez", "number": 2, "role": "DEF" },
+        { "name": "César Montes", "number": 3, "role": "DEF" },
+        { "name": "Johan Vásquez", "number": 5, "role": "DEF" },
+        { "name": "Jesús Gallardo", "number": 23, "role": "DEF" },
+        { "name": "Edson Álvarez", "number": 4, "role": "MID" },
+        { "name": "Orbelin Pineda", "number": 17, "role": "MID" },
+        { "name": "Chucky Lozano", "number": 22, "role": "MID" },
+        { "name": "Raúl Jiménez", "number": 9, "role": "FWD" },
+        { "name": "Henry Martin", "number": 11, "role": "FWD" },
+        { "name": "Santiago Giménez", "number": 10, "role": "FWD" }
+      ]
+    },
+    "usa": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Matt Turner", "number": 1, "role": "GK" },
+        { "name": "Sean Johnson", "number": 12, "role": "GK" },
+        { "name": "Chris Brady", "number": 25, "role": "GK" },
+        { "name": "Antonee Robinson", "number": 5, "role": "DEF" },
+        { "name": "Tim Ream", "number": 13, "role": "DEF" },
+        { "name": "Joe Scally", "number": 3, "role": "DEF" },
+        { "name": "Auston Trusty", "number": 6, "role": "DEF" },
+        { "name": "Tyler Adams", "number": 4, "role": "MID" },
+        { "name": "Weston McKennie", "number": 8, "role": "MID" },
+        { "name": "Christian Pulisic", "number": 10, "role": "MID" },
+        { "name": "Gio Reyna", "number": 7, "role": "FWD" },
+        { "name": "Josh Sargent", "number": 9, "role": "FWD" },
+        { "name": "Timothy Weah", "number": 21, "role": "FWD" }
+      ]
+    },
+    "canada": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Dayne St. Clair", "number": 1, "role": "GK" },
+        { "name": "Maxime Crépeau", "number": 16, "role": "GK" },
+        { "name": "Milan Borjan", "number": 18, "role": "GK" },
+        { "name": "Alphonso Davies", "number": 19, "role": "DEF" },
+        { "name": "Alistair Johnston", "number": 2, "role": "DEF" },
+        { "name": "Derek Cornelius", "number": 13, "role": "DEF" },
+        { "name": "Kamal Miller", "number": 5, "role": "DEF" },
+        { "name": "Stephen Eustáquio", "number": 7, "role": "MID" },
+        { "name": "Atiba Hutchinson", "number": 13, "role": "MID" },
+        { "name": "Tajon Buchanan", "number": 11, "role": "MID" },
+        { "name": "Jonathan David", "number": 10, "role": "FWD" },
+        { "name": "Cyle Larin", "number": 9, "role": "FWD" },
+        { "name": "Junior Hoilett", "number": 7, "role": "FWD" }
+      ]
+    },
+    "uruguay": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Sergio Rochet", "number": 1, "role": "GK" },
+        { "name": "Fernando Muslera", "number": 23, "role": "GK" },
+        { "name": "Santiago Mele", "number": 12, "role": "GK" },
+        { "name": "José María Giménez", "number": 2, "role": "DEF" },
+        { "name": "Ronald Araújo", "number": 4, "role": "DEF" },
+        { "name": "Mathías Olivera", "number": 16, "role": "DEF" },
+        { "name": "Guillermo Varela", "number": 13, "role": "DEF" },
+        { "name": "Rodrigo Bentancur", "number": 6, "role": "MID" },
+        { "name": "Federico Valverde", "number": 14, "role": "MID" },
+        { "name": "Giorgian de Arrascaeta", "number": 10, "role": "MID" },
+        { "name": "Darwin Núñez", "number": 11, "role": "FWD" },
+        { "name": "Rodrigo Aguirre", "number": 19, "role": "FWD" },
+        { "name": "Brian Rodríguez", "number": 18, "role": "FWD" }
+      ]
+    },
+    "colombia": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "David Ospina", "number": 1, "role": "GK" },
+        { "name": "Camilo Vargas", "number": 12, "role": "GK" },
+        { "name": "Álvaro Montero", "number": 24, "role": "GK" },
+        { "name": "Dávinson Sánchez", "number": 2, "role": "DEF" },
+        { "name": "Carlos Cuesta", "number": 4, "role": "DEF" },
+        { "name": "Daniel Muñoz", "number": 2, "role": "DEF" },
+        { "name": "Johan Mojica", "number": 17, "role": "DEF" },
+        { "name": "James Rodríguez", "number": 10, "role": "MID" },
+        { "name": "Matheus Uribe", "number": 8, "role": "MID" },
+        { "name": "Jhon Arias", "number": 7, "role": "MID" },
+        { "name": "Luis Díaz", "number": 23, "role": "FWD" },
+        { "name": "Rafael Santos Borré", "number": 9, "role": "FWD" },
+        { "name": "Cucho Hernández", "number": 11, "role": "FWD" }
+      ]
+    },
+    "egypt": {
+      "season": "2026 FIFA World Cup",
+      "players": [
+        { "name": "Mohamed El Shenawy", "number": 1, "role": "GK" },
+        { "name": "Mahdy Soliman", "number": 16, "role": "GK" },
+        { "name": "Mostafa Shoubir", "number": 23, "role": "GK" },
+        { "name": "Mohamed Hany", "number": 3, "role": "DEF" },
+        { "name": "Ahmed Hegazi", "number": 5, "role": "DEF" },
+        { "name": "Omar Kamal", "number": 2, "role": "DEF" },
+        { "name": "Ramy Rabia", "number": 15, "role": "DEF" },
+        { "name": "Emam Ashour", "number": 8, "role": "MID" },
+        { "name": "Hamdy Fathy", "number": 14, "role": "MID" },
+        { "name": "Trézéguet", "number": 11, "role": "MID" },
+        { "name": "Mohamed Salah", "number": 10, "role": "FWD" },
+        { "name": "Marwan Hamdi", "number": 7, "role": "FWD" },
+        { "name": "Omar Marmoush", "number": 9, "role": "FWD" }
+      ]
+    }
+  }
+}

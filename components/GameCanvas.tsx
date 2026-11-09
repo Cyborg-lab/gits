@@ -1241,6 +1241,11 @@ const GameCanvas: React.FC = () => {
         draft.away.clubId = clubId;
       }
     });
+    if (selectionTeam === Team.HOME) {
+      setHomeSelectionReady(true);
+    } else {
+      setAwaySelectionReady(true);
+    }
   };
 
   const handleTeamFormationSelect = (formation: FormationKey) => {
@@ -1303,11 +1308,9 @@ const GameCanvas: React.FC = () => {
       return;
     }
 
-    if (homeSelectionReady && awaySelectionReady) {
-      setShowTeamSelect(false);
-      setSquadSelectTeam(Team.HOME);
-      setShowSquadSelect(true);
-    }
+    setShowTeamSelect(false);
+    setSquadSelectTeam(Team.HOME);
+    setShowSquadSelect(true);
   };
 
   const handleContinueSquadSelect = () => {
@@ -1548,10 +1551,10 @@ const GameCanvas: React.FC = () => {
     : null;
   const teamSelectCanContinue =
     gameMode === GameMode.SINGLE_PLAYER
-      ? Boolean(matchSetup.home.clubId) && homeSelectionReady
+      ? Boolean(matchSetup.home.clubId)
       : selectionTeam === Team.HOME
         ? Boolean(matchSetup.home.clubId)
-        : Boolean(matchSetup.away.clubId) && homeSelectionReady && awaySelectionReady;
+        : Boolean(matchSetup.away.clubId);
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-black">

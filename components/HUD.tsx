@@ -28,7 +28,7 @@ export const HUD: React.FC<HUDProps> = ({ score, gameMode, tournamentInfo, isLan
   const awayCards = score.cardsAway || { yellow: 0, red: 0 };
 
   return (
-    <div className="absolute top-8 left-8 p-4 pointer-events-none flex flex-col z-30 font-sport">
+    <div className="absolute top-3 left-3 sm:top-6 sm:left-6 p-2 sm:p-4 pointer-events-none flex flex-col z-30 font-sport">
       <div className="flex items-stretch shadow-[0_8px_30px_rgba(0,0,0,0.55)]">
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-rose-700 text-white flex items-center px-4 py-2 border-b-[3px] border-rose-500">
           <div className="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center mr-3 font-black text-[10px] shadow-inner">P1</div>

@@ -130,44 +130,34 @@ const FootballFormationBoard: React.FC<{ clubName: string; formation: FormationK
   const layout = FORMATION_LAYOUTS[formation];
 
   return (
-    <div className="rounded-3xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.2),_rgba(15,23,42,0.95))] p-5 shadow-[0_0_35px_rgba(34,211,238,0.15)]">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.32em] text-cyan-300/75">Football Formation Diagram</div>
-          <div className="mt-1 font-sport text-2xl text-white">{clubName}</div>
-        </div>
-        <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 font-sport text-lg text-cyan-200">{formation}</div>
-      </div>
+    <div className="relative h-[155px] sm:h-[180px] md:h-[200px] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-[linear-gradient(180deg,_rgba(30,122,57,0.92),_rgba(18,85,43,0.98))] shadow-inner">
+      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)', backgroundSize: '20% 20%' }} />
+      <div className="absolute inset-x-0 top-1/2 h-px bg-white/40" />
+      <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/40" />
+      <div className="absolute left-1/2 top-1/2 h-20 w-20 sm:h-24 sm:w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/45" />
+      <div className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/85" />
+      <div className="absolute inset-y-0 left-0 w-1/4 border-r border-white/40" />
+      <div className="absolute inset-y-0 right-0 w-1/4 border-l border-white/40" />
 
-      <div className="relative h-[280px] overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,_rgba(30,122,57,0.9),_rgba(18,85,43,0.96))]">
-        <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '20% 20%' }} />
-        <div className="absolute inset-x-0 top-1/2 h-px bg-white/40" />
-        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/40" />
-        <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/45" />
-        <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/85" />
-        <div className="absolute inset-y-0 left-0 w-1/4 border-r border-white/40" />
-        <div className="absolute inset-y-0 right-0 w-1/4 border-l border-white/40" />
-
-        {layout.map((slot, index) => {
-          const player = players[index] ?? { name: 'Bench', number: index + 1, role: slot.role };
-          const x = slot.x * 100;
-          const y = slot.y * 100;
-          return (
-            <div
-              key={`${clubName}-${formation}-${index}`}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${x}%`, top: `${y}%` }}
-            >
-              <div className="flex flex-col items-center gap-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-slate-950/85 text-[10px] font-black text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.45)]">
-                  {player.number}
-                </div>
-                <div className="rounded-full border border-white/15 bg-slate-900/75 px-2 py-1 text-[8px] uppercase tracking-[0.2em] text-white/80">{slot.role}</div>
+      {layout.map((slot, index) => {
+        const player = players[index] ?? { name: 'Bench', number: index + 1, role: slot.role };
+        const x = slot.x * 100;
+        const y = slot.y * 100;
+        return (
+          <div
+            key={`${clubName}-${formation}-${index}`}
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            style={{ left: `${x}%`, top: `${y}%` }}
+          >
+            <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+              <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-white/60 bg-slate-950/85 text-[8px] sm:text-[9px] font-black text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.45)]">
+                {player.number}
               </div>
+              <div className="rounded-full border border-white/15 bg-slate-900/80 px-1.5 py-0.5 text-[6px] sm:text-[7px] uppercase tracking-[0.15em] text-white/90 leading-none">{slot.role}</div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -251,7 +241,7 @@ export const MainMenu: React.FC<MenuProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(20,35,58,0.95),_rgba(2,6,23,1)_52%)] text-white">
+    <div className="absolute inset-0 z-50 overflow-y-auto overflow-x-hidden p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start sm:justify-center bg-[radial-gradient(circle_at_top,_rgba(20,35,58,0.95),_rgba(2,6,23,1)_52%)] text-white">
       <div className="menu-stadium-lights pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="menu-light-beam menu-light-beam-left" />
         <div className="menu-light-beam menu-light-beam-right" />
@@ -262,29 +252,29 @@ export const MainMenu: React.FC<MenuProps> = ({
       <div className="absolute -top-40 -left-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-[120px]" />
       <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-violet-500/20 blur-[120px]" />
 
-      <div className="relative z-10 w-[min(1200px,92vw)] rounded-[30px] border border-white/10 bg-slate-950/35 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.7)] backdrop-blur-xl">
-        <div className="flex items-center justify-between px-4 pb-4 pt-2">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-500/10 font-sport text-sm text-cyan-200">FC</div>
+      <div className="relative z-10 w-[min(1240px,96vw)] my-auto rounded-[24px] sm:rounded-[30px] border border-white/10 bg-slate-950/45 p-3.5 sm:p-4 md:p-5 shadow-[0_30px_90px_rgba(15,23,42,0.7)] backdrop-blur-xl">
+        <div className="flex items-center justify-between px-3 pb-3 pt-1">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-500/10 font-sport text-sm text-cyan-200">FC</div>
             <div>
-              <div className="text-[0.62rem] uppercase tracking-[0.5em] text-cyan-200/80">FIFA 2026</div>
-              <div className="font-sport text-2xl tracking-tight text-white">ARCADE FC</div>
+              <div className="text-[0.6rem] uppercase tracking-[0.5em] text-cyan-200/80">FIFA 2026</div>
+              <div className="font-sport text-xl sm:text-2xl tracking-tight text-white leading-tight">ARCADE FC</div>
             </div>
           </div>
 
-          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.58rem] uppercase tracking-[0.38em] text-white/70">
+          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[0.55rem] uppercase tracking-[0.35em] text-white/70">
             LIVE MODE
           </div>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
-          <aside className="rounded-[28px] border border-white/10 bg-slate-950/40 p-4">
-            <div className="mb-4 flex items-center justify-between">
+        <div className="grid gap-3 sm:gap-5 lg:grid-cols-[340px_1fr]">
+          <aside className="rounded-[24px] border border-white/10 bg-slate-950/40 p-3 sm:p-4">
+            <div className="mb-3 flex items-center justify-between">
               <div className="text-[0.6rem] uppercase tracking-[0.42em] text-slate-300/80">Main Menu</div>
-              <div className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[0.5rem] uppercase tracking-[0.28em] text-slate-200/70">01</div>
+              <div className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.28em] text-slate-200/70">01</div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-2.5">
               {primaryActions.map(({ key, label, subtitle, accent, action }) => {
                 const styles = accentMap[accent];
                 const isSelected = selectedPrimaryAction === key;
@@ -299,15 +289,15 @@ export const MainMenu: React.FC<MenuProps> = ({
                       setSelectedPrimaryAction(key);
                       action();
                     }}
-                    className={`group relative block w-full overflow-hidden rounded-[22px] border p-0 text-left transition-all duration-300 ${isSelected ? `translate-x-1 ${styles.glow} ${styles.panel}` : 'border-white/10 bg-slate-900/30 hover:border-white/20 hover:bg-slate-900/45'} ${isSelected ? 'scale-[1.01]' : ''}`}
+                    className={`group relative block w-full overflow-hidden rounded-[18px] sm:rounded-[20px] border p-0 text-left transition-all duration-300 ${isSelected ? `translate-x-1 ${styles.glow} ${styles.panel}` : 'border-white/10 bg-slate-900/30 hover:border-white/20 hover:bg-slate-900/45'} ${isSelected ? 'scale-[1.01]' : ''}`}
                   >
                     <div className={`absolute inset-y-0 left-0 w-[5px] bg-gradient-to-b ${styles.edge}`} />
-                    <div className="relative flex items-center justify-between gap-3 px-4 py-4">
+                    <div className="relative flex items-center justify-between gap-3 px-3.5 py-3">
                       <div className="min-w-0">
-                        <div className={`font-sport text-[1.5rem] uppercase ${isSelected ? styles.title : 'text-white'}`}>{label}</div>
-                        <div className="mt-1 text-[0.55rem] uppercase tracking-[0.3em] text-slate-300/75">{subtitle}</div>
+                        <div className={`font-sport text-[1.3rem] sm:text-[1.45rem] uppercase leading-none ${isSelected ? styles.title : 'text-white'}`}>{label}</div>
+                        <div className="mt-1 text-[0.52rem] uppercase tracking-[0.3em] text-slate-300/75">{subtitle}</div>
                       </div>
-                      <div className={`rounded-full border px-2 py-1 text-[0.5rem] uppercase tracking-[0.25em] ${isSelected ? styles.chip : 'border-white/10 bg-white/5 text-slate-200/70'}`}>
+                      <div className={`rounded-full border px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.25em] ${isSelected ? styles.chip : 'border-white/10 bg-white/5 text-slate-200/70'}`}>
                         {isSelected ? 'ON' : 'GO'}
                       </div>
                     </div>
@@ -316,99 +306,99 @@ export const MainMenu: React.FC<MenuProps> = ({
               })}
             </div>
 
-            <div className="mt-5 rounded-[22px] border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950/60 p-4">
-              <div className="text-[0.55rem] uppercase tracking-[0.42em] text-white/60">Quick Info</div>
+            <div className="mt-3.5 sm:mt-4 rounded-[18px] border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950/60 p-3 sm:p-3.5">
+              <div className="text-[0.52rem] uppercase tracking-[0.4em] text-white/60">Quick Info</div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-200/80">
-                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
-                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Mode</div>
-                  <div className="mt-2 font-sport text-lg text-white">Quick</div>
+              <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs text-slate-200/80">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-[0.45rem] uppercase tracking-[0.25em] text-slate-400">Mode</div>
+                  <div className="mt-1 font-sport text-base text-white">Quick</div>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
-                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Teams</div>
-                  <div className="mt-2 font-sport text-lg text-white">World</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-[0.45rem] uppercase tracking-[0.25em] text-slate-400">Teams</div>
+                  <div className="mt-1 font-sport text-base text-white">World</div>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
-                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Match</div>
-                  <div className="mt-2 font-sport text-lg text-white">90min</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-[0.45rem] uppercase tracking-[0.25em] text-slate-400">Match</div>
+                  <div className="mt-1 font-sport text-base text-white">90min</div>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-2">
-                  <div className="text-[0.46rem] uppercase tracking-[0.26em] text-slate-400">Style</div>
-                  <div className="mt-2 font-sport text-lg text-white">FC26</div>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-[0.45rem] uppercase tracking-[0.25em] text-slate-400">Style</div>
+                  <div className="mt-1 font-sport text-base text-white">FC26</div>
                 </div>
               </div>
             </div>
           </aside>
 
-          <section className="relative overflow-hidden rounded-[30px] border border-cyan-400/20 bg-[linear-gradient(135deg,rgba(4,12,24,0.9),rgba(7,19,38,0.78))] p-5">
+          <section className="relative overflow-hidden rounded-[24px] sm:rounded-[28px] border border-cyan-400/20 bg-[linear-gradient(135deg,rgba(4,12,24,0.9),rgba(7,19,38,0.78))] p-3.5 sm:p-4 md:p-5">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.18),transparent_33%),radial-gradient(circle_at_bottom,_rgba(13,148,136,0.12),transparent_28%)]" />
             <div className="relative flex h-full flex-col">
-              <div className="mb-3 flex items-center justify-between gap-4">
+              <div className="mb-2 sm:mb-3 flex items-center justify-between gap-4">
                 <div>
-                  <div className="text-[0.6rem] uppercase tracking-[0.42em] text-cyan-200/80">Match History</div>
-                  <div className="mt-1 font-sport text-4xl text-white">RECENT RESULTS</div>
+                  <div className="text-[0.55rem] uppercase tracking-[0.4em] text-cyan-200/80">Match History</div>
+                  <div className="mt-0.5 font-sport text-2xl sm:text-3xl text-white">RECENT RESULTS</div>
                 </div>
-                <div className="rounded-full border border-cyan-300/40 bg-cyan-500/10 px-3 py-1 text-[0.5rem] uppercase tracking-[0.38em] text-cyan-100">{matchHistory.length} PLAYED</div>
+                <div className="rounded-full border border-cyan-300/40 bg-cyan-500/10 px-2.5 py-0.5 text-[0.5rem] uppercase tracking-[0.35em] text-cyan-100">{matchHistory.length} PLAYED</div>
               </div>
 
-              <div className="relative flex-1 overflow-hidden rounded-[26px] border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(20,83,45,0.8),rgba(8,15,24,0.95))] p-5">
+              <div className="relative flex-1 overflow-hidden rounded-[20px] sm:rounded-[24px] border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(20,83,45,0.8),rgba(8,15,24,0.95))] p-3 sm:p-4">
                 <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cyan-300/10 to-transparent" />
                 <div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
-                <div className="relative grid h-full gap-4 md:grid-cols-[1.2fr_0.8fr]">
-                  <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/20 p-4">
+                <div className="relative grid h-full gap-3 md:grid-cols-[1.2fr_0.8fr]">
+                  <div className="relative overflow-hidden rounded-[20px] border border-white/10 bg-slate-950/20 p-3 sm:p-4">
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,24,39,0.2),rgba(17,24,39,0.75))]" />
                     <div className="relative flex h-full flex-col justify-between">
-                      <div className="flex items-center justify-between text-[0.52rem] uppercase tracking-[0.32em] text-slate-200/80">
+                      <div className="flex items-center justify-between text-[0.5rem] uppercase tracking-[0.3em] text-slate-200/80">
                         <span>{featuredMatch ? new Date(featuredMatch.playedAt).toLocaleString() : 'MATCH HISTORY'}</span>
                         <span>{featuredMatch?.stadium.replaceAll('_', ' ') || 'LOCAL DATABASE'}</span>
                       </div>
 
-                      <div className="relative mx-auto mt-3 flex w-full max-w-[520px] items-center justify-between rounded-[20px] border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-sm">
+                      <div className="relative mx-auto mt-2 flex w-full max-w-[500px] items-center justify-between rounded-[18px] border border-white/10 bg-black/25 px-3 py-2 sm:px-4 sm:py-3 backdrop-blur-sm">
                         <div className="text-left">
-                          <div className="text-[0.5rem] uppercase tracking-[0.34em] text-slate-300">Home</div>
-                          <div className="mt-1 font-sport text-3xl text-white">{featuredMatch?.home || '—'}</div>
+                          <div className="text-[0.48rem] uppercase tracking-[0.32em] text-slate-300">Home</div>
+                          <div className="mt-0.5 font-sport text-xl sm:text-2xl text-white truncate max-w-[120px]">{featuredMatch?.home || '—'}</div>
                         </div>
-                        <div className="px-5 text-center">
-                          <div className="text-[0.5rem] uppercase tracking-[0.38em] text-cyan-200">{featuredMatch?.mode.replaceAll('_', ' ') || 'NO MATCHES YET'}</div>
-                          <div className="mt-2 font-sport text-5xl tracking-tight text-white">{featuredMatch ? `${featuredMatch.homeScore} - ${featuredMatch.awayScore}` : '— : —'}</div>
+                        <div className="px-3 text-center">
+                          <div className="text-[0.48rem] uppercase tracking-[0.35em] text-cyan-200">{featuredMatch?.mode.replaceAll('_', ' ') || 'NO MATCHES YET'}</div>
+                          <div className="mt-1 font-sport text-3xl sm:text-4xl tracking-tight text-white">{featuredMatch ? `${featuredMatch.homeScore} - ${featuredMatch.awayScore}` : '— : —'}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[0.5rem] uppercase tracking-[0.34em] text-slate-300">Away</div>
-                          <div className="mt-1 font-sport text-3xl text-white">{featuredMatch?.away || '—'}</div>
+                          <div className="text-[0.48rem] uppercase tracking-[0.32em] text-slate-300">Away</div>
+                          <div className="mt-0.5 font-sport text-xl sm:text-2xl text-white truncate max-w-[120px]">{featuredMatch?.away || '—'}</div>
                         </div>
                       </div>
 
-                      <div className="mt-5 flex items-end justify-between gap-3">
-                        <div className="rounded-[18px] border border-cyan-400/30 bg-cyan-500/10 px-4 py-3">
-                          <div className="text-[0.46rem] uppercase tracking-[0.32em] text-cyan-200/80">Matches</div>
-                          <div className="mt-2 font-sport text-3xl text-white">{matchHistory.length}</div>
+                      <div className="mt-3 flex items-end justify-between gap-2">
+                        <div className="rounded-[16px] border border-cyan-400/30 bg-cyan-500/10 px-3 py-2">
+                          <div className="text-[0.45rem] uppercase tracking-[0.3em] text-cyan-200/80">Matches</div>
+                          <div className="mt-1 font-sport text-2xl text-white">{matchHistory.length}</div>
                         </div>
-                        <div className="rounded-[18px] border border-white/10 bg-white/5 px-4 py-3">
-                          <div className="text-[0.46rem] uppercase tracking-[0.32em] text-slate-300">Latest</div>
-                          <div className="mt-2 font-sport text-3xl text-white">{featuredMatch ? new Date(featuredMatch.playedAt).toLocaleDateString() : '—'}</div>
+                        <div className="rounded-[16px] border border-white/10 bg-white/5 px-3 py-2">
+                          <div className="text-[0.45rem] uppercase tracking-[0.3em] text-slate-300">Latest</div>
+                          <div className="mt-1 font-sport text-2xl text-white">{featuredMatch ? new Date(featuredMatch.playedAt).toLocaleDateString() : '—'}</div>
                         </div>
-                        <div className="rounded-[18px] border border-amber-400/30 bg-amber-500/10 px-4 py-3">
-                          <div className="text-[0.46rem] uppercase tracking-[0.32em] text-amber-200/80">Storage</div>
-                          <div className="mt-2 font-sport text-3xl text-white">IndexedDB</div>
+                        <div className="rounded-[16px] border border-amber-400/30 bg-amber-500/10 px-3 py-2">
+                          <div className="text-[0.45rem] uppercase tracking-[0.3em] text-amber-200/80">Storage</div>
+                          <div className="mt-1 font-sport text-2xl text-white">IndexedDB</div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-4">
-                    <div className="min-h-0 flex-1 rounded-[22px] border border-white/10 bg-slate-950/35 p-4">
+                  <div className="flex flex-col gap-3">
+                    <div className="min-h-0 flex-1 rounded-[20px] border border-white/10 bg-slate-950/35 p-3 sm:p-4">
                       <div className="text-[0.5rem] uppercase tracking-[0.38em] text-slate-300/80">All Previous Matches</div>
-                      <div className="mt-3 max-h-[300px] space-y-2 overflow-y-auto pr-1">
-                        {matchHistory.length === 0 && <div className="text-sm text-slate-200/60">Завершённые матчи появятся здесь.</div>}
+                      <div className="mt-2.5 max-h-[160px] sm:max-h-[200px] space-y-1.5 overflow-y-auto pr-1">
+                        {matchHistory.length === 0 && <div className="text-xs text-slate-200/60">Завершённые матчи появятся здесь.</div>}
                         {matchHistory.map(match => (
-                          <div key={match.id} className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
-                            <div className="flex items-center justify-between gap-2 text-sm text-white">
+                          <div key={match.id} className="rounded-xl border border-white/10 bg-black/20 px-2.5 py-1.5">
+                            <div className="flex items-center justify-between gap-2 text-xs sm:text-sm text-white">
                               <span className="truncate">{match.home}</span>
-                              <span className="text-center font-sport text-xl text-cyan-200">{match.homeScore} : {match.awayScore}{match.shootoutHome !== undefined && <span className="block text-[9px] leading-none text-amber-200">PEN {match.shootoutHome} : {match.shootoutAway}</span>}</span>
+                              <span className="text-center font-sport text-base sm:text-lg text-cyan-200 shrink-0">{match.homeScore} : {match.awayScore}{match.shootoutHome !== undefined && <span className="block text-[8px] leading-none text-amber-200">PEN {match.shootoutHome} : {match.shootoutAway}</span>}</span>
                               <span className="truncate text-right">{match.away}</span>
                             </div>
-                            <div className="mt-1 text-[10px] text-slate-400">{new Date(match.playedAt).toLocaleString()} · {match.mode.replaceAll('_', ' ')}</div>
+                            <div className="mt-0.5 text-[9px] text-slate-400">{new Date(match.playedAt).toLocaleString()} · {match.mode.replaceAll('_', ' ')}</div>
                           </div>
                         ))}
                       </div>
@@ -420,31 +410,31 @@ export const MainMenu: React.FC<MenuProps> = ({
           </section>
         </div>
 
-        <div className="mt-4 grid gap-3 rounded-[22px] border border-white/10 bg-slate-950/40 p-4 md:grid-cols-3">
-          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3">
-            <div className="text-[0.52rem] uppercase tracking-[0.32em] text-slate-300">P1 Controls</div>
-            <div className="mt-2 text-sm text-slate-200/80">WASD • Q • E • R • F • Shift</div>
+        <div className="mt-3 grid gap-2 rounded-[20px] border border-white/10 bg-slate-950/40 p-2.5 sm:p-3 md:grid-cols-3">
+          <div className="rounded-[16px] border border-white/10 bg-white/5 p-2 sm:p-2.5">
+            <div className="text-[0.5rem] uppercase tracking-[0.3em] text-slate-300">P1 Controls</div>
+            <div className="mt-1 text-xs text-slate-200/80">WASD • Q • E • R • F • Shift</div>
           </div>
-          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3">
-            <div className="text-[0.52rem] uppercase tracking-[0.32em] text-slate-300">P2 Controls</div>
-            <div className="mt-2 text-sm text-slate-200/80">IJKL • U • O • P • ; • Shift</div>
+          <div className="rounded-[16px] border border-white/10 bg-white/5 p-2 sm:p-2.5">
+            <div className="text-[0.5rem] uppercase tracking-[0.3em] text-slate-300">P2 Controls</div>
+            <div className="mt-1 text-xs text-slate-200/80">IJKL • U • O • P • ; • Shift</div>
           </div>
-          <div className="rounded-[18px] border border-white/10 bg-white/5 p-3">
-            <div className="text-[0.52rem] uppercase tracking-[0.32em] text-slate-300">Modes</div>
-            <div className="mt-2 text-sm text-slate-200/80">Kick off • Champions League • LAN • Clubs</div>
+          <div className="rounded-[16px] border border-white/10 bg-white/5 p-2 sm:p-2.5">
+            <div className="text-[0.5rem] uppercase tracking-[0.3em] text-slate-300">Modes</div>
+            <div className="mt-1 text-xs text-slate-200/80">Kick off • Champions League • LAN • Clubs</div>
           </div>
         </div>
       </div>
 
       {isChoosingMode && (
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-20">
-          <div className="glass-panel rounded-2xl p-8 w-[min(92vw,640px)] border border-white/10">
-            <div className="text-center mb-6">
-              <h2 className="text-4xl font-sport font-bold tracking-tight text-cyan-300">CHOOSE MATCH MODE</h2>
-              <p className="text-sm uppercase tracking-[0.35em] text-white/50 mt-2">Choose a club after this</p>
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-md flex flex-col items-center justify-start sm:justify-center z-20 overflow-y-auto p-3 sm:p-6">
+          <div className="glass-panel rounded-2xl p-4 sm:p-7 w-[min(94vw,640px)] border border-white/10 my-auto">
+            <div className="text-center mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-4xl font-sport font-bold tracking-tight text-cyan-300">CHOOSE MATCH MODE</h2>
+              <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-white/50 mt-1">Choose a club after this</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
               <div
                 role="button"
                 tabIndex={0}
@@ -455,11 +445,11 @@ export const MainMenu: React.FC<MenuProps> = ({
                     onSelectMode(GameMode.SINGLE_PLAYER);
                   }
                 }}
-                className="text-left rounded-2xl border border-cyan-400/30 bg-cyan-500/10 hover:bg-cyan-500/20 px-5 py-6 transition-all"
+                className="text-left rounded-2xl border border-cyan-400/30 bg-cyan-500/10 hover:bg-cyan-500/20 p-3.5 sm:p-5 transition-all cursor-pointer"
               >
-                <div className="font-sport text-2xl text-cyan-300">SMART AI</div>
-                <div className="mt-2 text-sm text-white/70">P1 chooses a club, AI gets a random rival</div>
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="font-sport text-xl sm:text-2xl text-cyan-300">SMART AI</div>
+                <div className="mt-1 text-xs sm:text-sm text-white/70">P1 chooses a club, AI gets a random rival</div>
+                <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2">
                   {(['EASY', 'NORMAL', 'MEDIUM', 'HARD', 'EXTREME'] as AIDifficulty[]).map(level => (
                     <button
                       key={level}
@@ -468,8 +458,8 @@ export const MainMenu: React.FC<MenuProps> = ({
                         event.stopPropagation();
                         onSelectDifficulty(level);
                       }}
-                      className={`rounded-full px-3 py-1 text-xs font-bold tracking-wider ${
-                        selectedDifficulty === level ? 'bg-cyan-300 text-slate-950' : 'bg-black/30 text-white/75'
+                      className={`rounded-full px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold tracking-wider ${
+                        selectedDifficulty === level ? 'bg-cyan-300 text-slate-950 font-black' : 'bg-black/30 text-white/75 hover:bg-black/50'
                       }`}
                     >
                       {level}
@@ -480,90 +470,89 @@ export const MainMenu: React.FC<MenuProps> = ({
 
               <button
                 onClick={() => onSelectMode(GameMode.MULTI_PLAYER)}
-                className="text-left rounded-2xl border border-blue-400/30 bg-blue-500/10 hover:bg-blue-500/20 px-5 py-6 transition-all"
+                className="text-left rounded-2xl border border-blue-400/30 bg-blue-500/10 hover:bg-blue-500/20 p-3.5 sm:p-5 transition-all"
               >
-                <div className="font-sport text-2xl text-blue-300">P1 VS P2</div>
-                <div className="mt-2 text-sm text-white/70">P2 controls: IJKL move, U pass, O shoot, Right Shift sprint</div>
+                <div className="font-sport text-xl sm:text-2xl text-blue-300">P1 VS P2</div>
+                <div className="mt-1 text-xs sm:text-sm text-white/70">P2 controls: IJKL move, U pass, O shoot, Right Shift sprint</div>
               </button>
 
               <button
                 onClick={onSelectChampionsLeague}
-                className="text-left rounded-2xl border border-amber-400/30 bg-amber-500/10 hover:bg-amber-500/20 px-5 py-6 transition-all"
+                className="text-left rounded-2xl border border-amber-400/30 bg-amber-500/10 hover:bg-amber-500/20 p-3.5 sm:p-5 transition-all"
               >
-                <div className="font-sport text-2xl text-amber-300">CHAMPIONS LEAGUE</div>
-                <div className="mt-2 text-sm text-white/70">Qualification, group stage and knockout rounds</div>
+                <div className="font-sport text-xl sm:text-2xl text-amber-300">CHAMPIONS LEAGUE</div>
+                <div className="mt-1 text-xs sm:text-sm text-white/70">Qualification, group stage and knockout rounds</div>
               </button>
 
               <button
                 onClick={onSelectNationalLeague}
-                className="text-left rounded-2xl border border-violet-400/30 bg-violet-500/10 hover:bg-violet-500/20 px-5 py-6 transition-all"
+                className="text-left rounded-2xl border border-violet-400/30 bg-violet-500/10 hover:bg-violet-500/20 p-3.5 sm:p-5 transition-all"
               >
-                <div className="font-sport text-2xl text-violet-300">NATIONAL LEAGUE</div>
-                <div className="mt-2 text-sm text-white/70">World nations from Europe to Oceania and global rivalry</div>
+                <div className="font-sport text-xl sm:text-2xl text-violet-300">NATIONAL LEAGUE</div>
+                <div className="mt-1 text-xs sm:text-sm text-white/70">World nations from Europe to Oceania and global rivalry</div>
               </button>
             </div>
           </div>
         </div>
       )}
 
-
       {isChoosingLan && (
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-20">
-          <div className="glass-panel rounded-2xl p-8 w-[min(92vw,760px)] border border-white/10">
-            <div className="text-center mb-6">
-              <h2 className="text-4xl font-sport font-bold tracking-tight text-blue-300">LOCAL WIFI MULTIPLAYER</h2>
-              <p className="text-sm uppercase tracking-[0.3em] text-white/50 mt-2">Host runs LAN server and opens the game with --host</p>
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-md flex flex-col items-center justify-start sm:justify-center z-20 overflow-y-auto p-3 sm:p-6">
+          <div className="glass-panel rounded-2xl p-4 sm:p-7 w-[min(94vw,760px)] border border-white/10 my-auto">
+            <div className="text-center mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-4xl font-sport font-bold tracking-tight text-blue-300">LOCAL WIFI MULTIPLAYER</h2>
+              <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-white/50 mt-1">Host runs LAN server and opens the game with --host</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-5">
-              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-5">
-                <div className="font-sport text-2xl text-white">Host Room</div>
-                <div className="mt-2 text-sm text-white/70">Create room on this PC, then share code and IP.</div>
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-5">
+              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 sm:p-5">
+                <div className="font-sport text-xl sm:text-2xl text-white">Host Room</div>
+                <div className="mt-1 text-xs sm:text-sm text-white/70">Create room on this PC, then share code and IP.</div>
                 <button
                   onClick={onCreateLanRoom}
                   disabled={isConnectingLan}
-                  className="mt-5 w-full rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-60 px-4 py-3 font-sport text-lg text-white transition-colors"
+                  className="mt-4 w-full rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-60 px-4 py-2.5 sm:py-3 font-sport text-base sm:text-lg text-white transition-colors"
                 >
                   CREATE ROOM
                 </button>
                 {roomCode && (
-                  <div className="mt-4 rounded-xl bg-black/30 border border-white/10 px-4 py-3">
-                    <div className="text-xs uppercase tracking-[0.25em] text-white/50">Room Code</div>
-                    <div className="text-3xl font-sport text-blue-300">{roomCode}</div>
-                    <div className="mt-2 text-sm text-white/70">{peerConnected ? 'Guest connected. Match will start on host.' : 'Waiting for guest to join.'}</div>
+                  <div className="mt-3 rounded-xl bg-black/30 border border-white/10 px-3 py-2.5">
+                    <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">Room Code</div>
+                    <div className="text-2xl sm:text-3xl font-sport text-blue-300">{roomCode}</div>
+                    <div className="mt-1 text-xs text-white/70">{peerConnected ? 'Guest connected. Match will start on host.' : 'Waiting for guest to join.'}</div>
                   </div>
                 )}
               </div>
 
-              <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
-                <div className="font-sport text-2xl text-white">Join Room</div>
-                <div className="mt-2 text-sm text-white/70">Host IP yoz, keyin room code bilan ulan.</div>
+              <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4 sm:p-5">
+                <div className="font-sport text-xl sm:text-2xl text-white">Join Room</div>
+                <div className="mt-1 text-xs sm:text-sm text-white/70">Host IP yoz, keyin room code bilan ulan.</div>
                 <input
                   value={lanHost}
                   onChange={e => onLanHostChange(e.target.value)}
                   placeholder="HOST IP or localhost"
-                  className="mt-5 w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-center text-lg text-white outline-none"
+                  className="mt-4 w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-center text-sm sm:text-base text-white outline-none"
                 />
                 <input
                   value={joinCode}
                   onChange={e => onJoinCodeChange(e.target.value)}
                   maxLength={4}
                   placeholder="ROOM"
-                  className="mt-4 w-full rounded-xl bg-black/30 border border-white/10 px-4 py-3 text-center text-2xl font-sport tracking-[0.35em] text-white outline-none"
+                  className="mt-3 w-full rounded-xl bg-black/30 border border-white/10 px-3 py-2 text-center text-xl sm:text-2xl font-sport tracking-[0.35em] text-white outline-none"
                 />
                 <button
                   onClick={onJoinLanRoom}
                   disabled={isConnectingLan}
-                  className="mt-4 w-full rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 px-4 py-3 font-sport text-lg text-slate-950 transition-colors"
+                  className="mt-3 w-full rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 px-4 py-2.5 sm:py-3 font-sport text-base sm:text-lg text-slate-950 transition-colors"
                 >
                   JOIN ROOM
                 </button>
               </div>
             </div>
 
-            <div className="mt-5 rounded-xl border border-white/10 bg-black/25 px-4 py-3 text-sm text-white/75">
+            <div className="mt-4 rounded-xl border border-white/10 bg-black/25 px-4 py-2.5 text-xs sm:text-sm text-white/75">
               <div>{lanStatus}</div>
-              {lanError && <div className="mt-2 text-rose-300">{lanError}</div>}
+              {lanError && <div className="mt-1 text-rose-300">{lanError}</div>}
             </div>
           </div>
         </div>
@@ -586,46 +575,46 @@ export const SquadSelectMenu: React.FC<SquadSelectMenuProps> = ({
   const formationPlayers = lineupIndices.map(index => players[index]);
 
   return (
-    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-lg flex items-center justify-center z-50 text-white">
-      <div className="w-[min(95vw,1200px)] glass-panel rounded-3xl border border-white/10 p-8">
+    <div className="absolute inset-0 z-50 bg-slate-950/92 backdrop-blur-lg overflow-y-auto overflow-x-hidden p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start sm:justify-center text-white">
+      <div className="w-[min(96vw,1200px)] glass-panel rounded-2xl sm:rounded-3xl border border-white/10 p-3.5 sm:p-5 md:p-6 my-auto">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-4xl font-sport text-cyan-300">{clubName} SQUAD</h2>
-            <p className="mt-2 text-sm uppercase tracking-[0.28em] text-white/45">
+            <h2 className="text-2xl sm:text-3xl font-sport text-cyan-300">{clubName} SQUAD</h2>
+            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-white/50">
               Pick a starter, then choose a reserve to swap in
             </p>
           </div>
-          <button onClick={onBack} className="rounded-xl border border-white/15 px-4 py-2 text-sm uppercase tracking-[0.2em] text-white/70 hover:bg-white/10">
+          <button onClick={onBack} className="rounded-xl border border-white/15 px-3.5 py-1.5 text-xs sm:text-sm uppercase tracking-[0.2em] text-white/70 hover:bg-white/10 transition-colors">
             Back
           </button>
         </div>
 
-        <div className="mt-8 grid xl:grid-cols-[1.2fr_0.8fr] gap-8">
-          <div className="grid md:grid-cols-2 gap-8">
+        <div className="mt-4 sm:mt-5 grid lg:grid-cols-[1.2fr_0.8fr] gap-4 sm:gap-6">
+          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <div className="text-sm uppercase tracking-[0.28em] text-white/45 mb-4">Starting 6</div>
-              <div className="flex flex-col gap-2">
+              <div className="text-xs uppercase tracking-[0.25em] text-white/50 mb-2 sm:mb-3">Starting 6</div>
+              <div className="flex flex-col gap-1.5 sm:gap-2">
                 {lineupIndices.map((playerIndex, slotIndex) => (
                   <button
                     key={`lineup-${slotIndex}`}
                     onClick={() => setSelectedLineupSlot(selectedLineupSlot === slotIndex ? null : slotIndex)}
-                    className={`flex justify-between items-center px-4 py-3 rounded-xl border transition-colors ${
+                    className={`flex justify-between items-center px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl border transition-colors ${
                       selectedLineupSlot === slotIndex ? 'border-cyan-400 bg-cyan-400/20' : 'border-white/10 bg-black/30 hover:bg-white/10'
                     }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <span className="font-sport text-xl text-white/50 w-6">{players[playerIndex].number}</span>
-                      <span className="font-sport text-xl">{players[playerIndex].name}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-sport text-lg text-white/50 w-5">{players[playerIndex].number}</span>
+                      <span className="font-sport text-base sm:text-lg">{players[playerIndex].name}</span>
                     </div>
-                    <span className="text-xs uppercase tracking-[0.2em] text-cyan-300">{players[playerIndex].role}</span>
+                    <span className="text-[11px] uppercase tracking-[0.2em] text-cyan-300 font-bold">{players[playerIndex].role}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <div className="text-sm uppercase tracking-[0.28em] text-white/45 mb-4">Substitutes</div>
-              <div className="flex flex-col gap-2">
+              <div className="text-xs uppercase tracking-[0.25em] text-white/50 mb-2 sm:mb-3">Substitutes</div>
+              <div className="flex flex-col gap-1.5 sm:gap-2 max-h-[260px] overflow-y-auto pr-1">
                 {subIndices.map((playerIndex, slotIndex) => (
                   <button
                     key={`sub-${slotIndex}`}
@@ -635,44 +624,44 @@ export const SquadSelectMenu: React.FC<SquadSelectMenuProps> = ({
                         setSelectedLineupSlot(null);
                       }
                     }}
-                    className={`flex justify-between items-center px-4 py-3 rounded-xl border transition-colors ${
+                    className={`flex justify-between items-center px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl border transition-colors ${
                       selectedLineupSlot !== null ? 'border-amber-400/50 bg-amber-400/10 hover:bg-amber-400/20 cursor-pointer' : 'border-white/10 bg-black/30 opacity-50 cursor-not-allowed'
                     }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <span className="font-sport text-xl text-white/50 w-6">{players[playerIndex].number}</span>
-                      <span className="font-sport text-xl">{players[playerIndex].name}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-sport text-lg text-white/50 w-5">{players[playerIndex].number}</span>
+                      <span className="font-sport text-base sm:text-lg">{players[playerIndex].name}</span>
                     </div>
-                    <span className="text-xs uppercase tracking-[0.2em] text-amber-300">{players[playerIndex].role}</span>
+                    <span className="text-[11px] uppercase tracking-[0.2em] text-amber-300 font-bold">{players[playerIndex].role}</span>
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.14),_rgba(15,23,42,0.96))] p-4 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-            <div className="flex items-center justify-between">
+          <div className="rounded-2xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.14),_rgba(15,23,42,0.96))] p-3 sm:p-4 shadow-[0_0_25px_rgba(34,211,238,0.15)] flex flex-col justify-between">
+            <div className="mb-2 flex items-center justify-between">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.36em] text-cyan-300/70">Tactical Formation Board</div>
-                <div className="mt-1 font-sport text-2xl text-white">{clubName}</div>
+                <div className="text-[9px] uppercase tracking-[0.3em] text-cyan-300/70">Tactical Formation Board</div>
+                <div className="mt-0.5 font-sport text-lg sm:text-xl text-white">{clubName}</div>
               </div>
-              <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 font-sport text-lg text-cyan-200">2-1-1</div>
+              <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-2.5 py-0.5 font-sport text-sm text-cyan-200">2-1-1</div>
             </div>
 
-            <div className="relative mt-4 h-[250px] overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,_rgba(30,122,57,0.9),_rgba(18,85,43,0.96))]">
+            <div className="relative h-[180px] sm:h-[210px] overflow-hidden rounded-xl border border-white/10 bg-[linear-gradient(180deg,_rgba(30,122,57,0.92),_rgba(18,85,43,0.98))]">
               <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '20% 20%' }} />
               <div className="absolute inset-x-0 top-1/2 h-px bg-white/40" />
               <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/40" />
-              <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/45" />
+              <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/45" />
               {[{x:0.08,y:0.55},{x:0.28,y:0.24},{x:0.28,y:0.76},{x:0.52,y:0.5},{x:0.74,y:0.26},{x:0.74,y:0.74}].map((slot, index) => {
                 const player = formationPlayers[index] ?? { name: 'Bench', number: index + 1, role: 'MID' };
                 return (
                   <div key={`board-${player.name}-${index}`} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${slot.x * 100}%`, top: `${slot.y * 100}%` }}>
-                    <div className="flex flex-col items-center gap-1">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-slate-950/85 text-[9px] font-black text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.45)]">
+                    <div className="flex flex-col items-center gap-0.5">
+                      <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-white/60 bg-slate-950/85 text-[8px] sm:text-[9px] font-black text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.45)]">
                         {player.number}
                       </div>
-                      <div className="rounded-full border border-white/15 bg-slate-900/75 px-2 py-1 text-[7px] uppercase tracking-[0.18em] text-white/80">{player.role}</div>
+                      <div className="rounded-full border border-white/15 bg-slate-900/75 px-1.5 py-0.5 text-[6px] sm:text-[7px] uppercase tracking-[0.15em] text-white/80 leading-none">{player.role}</div>
                     </div>
                   </div>
                 );
@@ -681,8 +670,8 @@ export const SquadSelectMenu: React.FC<SquadSelectMenuProps> = ({
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end">
-          <button onClick={onContinue} className="rounded-xl bg-cyan-400 px-8 py-3 font-sport text-xl text-slate-950 hover:bg-cyan-300 transition-colors">
+        <div className="mt-4 sm:mt-5 flex justify-end">
+          <button onClick={onContinue} className="rounded-xl bg-cyan-400 px-7 py-2.5 font-sport text-lg sm:text-xl text-slate-950 font-bold hover:bg-cyan-300 transition-colors shadow-[0_0_20px_rgba(34,211,238,0.35)]">
             CONFIRM LINEUP
           </button>
         </div>
@@ -716,134 +705,145 @@ export const TeamSelectMenu: React.FC<TeamSelectMenuProps> = ({
   const visibleClubs = clubs.slice(0, 6);
 
   return (
-    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-lg flex items-center justify-center z-50 text-white">
-      <div className="w-[min(95vw,1200px)] glass-panel rounded-3xl border border-white/10 p-8">
-        <div className="flex items-center justify-between gap-4">
+    <div className="absolute inset-0 z-50 bg-slate-950/92 backdrop-blur-lg overflow-y-auto overflow-x-hidden p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start sm:justify-center text-white">
+      <div className="w-[min(98vw,1240px)] glass-panel rounded-2xl sm:rounded-3xl border border-white/10 p-3 sm:p-5 md:p-6 my-auto flex flex-col">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-4xl font-sport text-cyan-300">{title || (currentTeam === Team.HOME ? 'P1 CLUB SELECT' : 'P2 CLUB SELECT')}</h2>
-            <p className="mt-2 text-sm uppercase tracking-[0.28em] text-white/45">
-              {subtitle || (mode === GameMode.SINGLE_PLAYER ? 'Choose your club, then press Left Shift' : 'Both players choose club and confirm with Shift')}
+            <h2 className="text-2xl sm:text-3xl font-sport text-cyan-300">{title || (currentTeam === Team.HOME ? 'P1 CLUB SELECT' : 'P2 CLUB SELECT')}</h2>
+            <p className="mt-0.5 text-xs uppercase tracking-[0.22em] text-white/50">
+              {subtitle || (mode === GameMode.SINGLE_PLAYER ? 'Choose your club and stadium, then click continue' : 'Both players choose club and confirm with Shift or Continue')}
             </p>
           </div>
-          <button onClick={onBack} className="rounded-xl border border-white/15 px-4 py-2 text-sm uppercase tracking-[0.2em] text-white/70 hover:bg-white/10">
+          <button onClick={onBack} className="rounded-xl border border-white/15 px-3.5 py-1.5 text-xs sm:text-sm uppercase tracking-[0.2em] text-white/70 hover:bg-white/10 transition-colors">
             Back
           </button>
         </div>
 
-        <div className="mt-8">
-          <div className="mt-8 flex flex-wrap gap-3">
-            {[LeagueKey.LA_LIGA, LeagueKey.PREMIER_LEAGUE, LeagueKey.LIGUE_1, LeagueKey.SERIE_A, LeagueKey.PORTUGAL_LIGA, LeagueKey.NATIONAL_LEAGUE].map(league => (
-              <button
-                key={league}
-                onClick={() => onSelectLeague(league)}
-                className={`rounded-full px-5 py-3 font-sport text-lg transition-colors ${
-                  currentLeague === league ? 'bg-cyan-400 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
-                }`}
-              >
-                {leagueLabel(league)}
-              </button>
-            ))}
-          </div>
+        <div className="mt-2.5 sm:mt-3 flex flex-wrap gap-1.5 sm:gap-2">
+          {[LeagueKey.LA_LIGA, LeagueKey.PREMIER_LEAGUE, LeagueKey.LIGUE_1, LeagueKey.SERIE_A, LeagueKey.PORTUGAL_LIGA, LeagueKey.NATIONAL_LEAGUE].map(league => (
+            <button
+              key={league}
+              onClick={() => onSelectLeague(league)}
+              className={`rounded-full px-3 py-1 sm:px-4 sm:py-1.5 font-sport text-xs sm:text-sm md:text-base transition-colors ${
+                currentLeague === league ? 'bg-cyan-400 text-slate-950 font-bold shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'bg-white/5 text-white/80 hover:bg-white/10'
+              }`}
+            >
+              {leagueLabel(league)}
+            </button>
+          ))}
+        </div>
 
-          <div className="mt-6 grid xl:grid-cols-[1.45fr_0.9fr] gap-5">
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {visibleClubs.map(club => {
-                const badgeText = club.badge || (club.shortName || club.name).slice(0, 3).toUpperCase();
-                const [badgeFrom, badgeTo] = club.badgeColors || ['#0ea5e9', '#1e293b'];
-                return (
-                  <button
-                    key={club.id}
-                    onClick={() => onSelectClub(club.id)}
-                    className={`group rounded-2xl border px-5 py-5 text-left transition-all duration-300 ${
-                      selectedClubId === club.id ? 'border-cyan-300 bg-cyan-400/15 shadow-[0_0_30px_rgba(34,211,238,0.18)]' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-400/30'
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 text-lg font-black tracking-[0.12em] text-white shadow-[inset_0_-8px_12px_rgba(15,23,42,0.5)]"
-                        style={{ background: `linear-gradient(135deg, ${badgeFrom}, ${badgeTo})` }}
-                      >
-                        <span>{badgeText}</span>
-                        {club.logoUrl && <img src={club.logoUrl} alt={`${club.name} logo`} className="absolute inset-0 h-full w-full rounded-full bg-white object-contain p-1.5" />}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="font-sport text-2xl text-white">{club.name}</div>
-                        <div className="mt-1 text-sm text-white/60">{leagueLabel(club.league)}</div>
-                      </div>
+        <div className="mt-3 sm:mt-4 grid lg:grid-cols-[1.3fr_0.9fr] gap-3 sm:gap-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-2.5">
+            {visibleClubs.map(club => {
+              const badgeText = club.badge || (club.shortName || club.name).slice(0, 3).toUpperCase();
+              const [badgeFrom, badgeTo] = club.badgeColors || ['#0ea5e9', '#1e293b'];
+              const isSelected = selectedClubId === club.id;
+              return (
+                <button
+                  key={club.id}
+                  onClick={() => onSelectClub(club.id)}
+                  className={`group rounded-xl sm:rounded-2xl border p-2 sm:p-2.5 text-left transition-all duration-200 ${
+                    isSelected ? 'border-cyan-300 bg-cyan-400/20 shadow-[0_0_24px_rgba(34,211,238,0.25)]' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-400/30'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 text-xs sm:text-sm font-black tracking-wider text-white shadow-md"
+                      style={{ background: `linear-gradient(135deg, ${badgeFrom}, ${badgeTo})` }}
+                    >
+                      <span>{badgeText}</span>
+                      {club.logoUrl && <img src={club.logoUrl} alt={`${club.name} logo`} className="absolute inset-0 h-full w-full rounded-full bg-white object-contain p-1" />}
                     </div>
-                    <div className="mt-4 text-[10px] uppercase tracking-[0.25em] text-white/40">
-                      {club.country || club.players.slice(0, 3).map(player => player.name).join(' • ')}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {selectedClub && (
-              <div className="rounded-3xl border border-cyan-400/20 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.18),_rgba(15,23,42,0.95))] p-4 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.32em] text-cyan-300/70">Selected Club</div>
-                    <div className="mt-1 flex items-center gap-2 font-sport text-2xl text-white">
-                      {selectedClub.logoUrl && <img src={selectedClub.logoUrl} alt="" className="h-9 w-9 rounded-full bg-white object-contain p-1" />}
-                      {selectedClub.name}
+                    <div className="min-w-0 flex-1">
+                      <div className="font-sport text-base sm:text-lg text-white truncate leading-tight">{club.name}</div>
+                      <div className="text-[11px] text-white/60 truncate">{leagueLabel(club.league)}</div>
                     </div>
                   </div>
-                  <div className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 font-sport text-lg text-cyan-200">{selectedClub.country}</div>
+                  <div className="mt-1.5 text-[9px] uppercase tracking-[0.2em] text-white/40 truncate">
+                    {club.country || club.players.slice(0, 3).map(player => player.name).join(' • ')}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedClub && (
+            <div className="rounded-2xl border border-cyan-400/25 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.14),_rgba(15,23,42,0.95))] p-3 sm:p-3.5 shadow-[0_0_25px_rgba(34,211,238,0.15)] flex flex-col justify-between">
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {selectedClub.logoUrl && <img src={selectedClub.logoUrl} alt="" className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-white object-contain p-0.5 shrink-0" />}
+                    <div className="min-w-0">
+                      <div className="text-[9px] uppercase tracking-[0.25em] text-cyan-300/70">Selected Club</div>
+                      <div className="font-sport text-lg sm:text-xl text-white truncate leading-tight">{selectedClub.name}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 font-sport text-xs text-white/70">{selectedClub.country}</span>
+                    <span className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-2 py-0.5 font-sport text-xs text-cyan-200">{selectedFormation}</span>
+                  </div>
                 </div>
 
-                <div className="mb-4 flex flex-wrap gap-2">
+                <div className="mb-2 flex flex-wrap gap-1.5">
                   {FORMATIONS.map(formation => (
                     <button
                       key={formation}
                       onClick={() => onSelectFormation?.(formation)}
-                      className={`rounded-full px-3 py-2 font-sport text-sm transition-colors ${
-                        selectedFormation === formation ? 'bg-cyan-300 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
+                      className={`rounded-full px-2.5 py-0.5 font-sport text-xs sm:text-sm transition-colors ${
+                        selectedFormation === formation ? 'bg-cyan-300 text-slate-950 font-bold' : 'bg-white/5 text-white/80 hover:bg-white/10'
                       }`}
                     >
                       {formation}
                     </button>
                   ))}
                 </div>
-
-                <FootballFormationBoard
-                  clubName={selectedClub.name}
-                  formation={selectedFormation}
-                  players={selectedClub.players.slice(0, 6).map(player => ({
-                    name: player.name,
-                    number: player.number,
-                    role: player.role,
-                  }))}
-                />
               </div>
-            )}
-          </div>
 
-          <div className="mt-8">
-            <div className="text-sm uppercase tracking-[0.28em] text-white/45">Choose Stadium</div>
-            <div className="mt-3 flex flex-wrap gap-3">
-              {stadiums.map(stadium => (
-                <button
-                  key={stadium.key}
-                  onClick={() => onSelectStadium(stadium.key)}
-                  className={`rounded-full px-5 py-3 font-sport text-base transition-colors ${
-                    selectedStadium === stadium.key ? 'bg-amber-300 text-slate-950' : 'bg-white/5 text-white hover:bg-white/10'
-                  }`}
-                >
-                  {stadium.label}
-                </button>
-              ))}
+              <FootballFormationBoard
+                clubName={selectedClub.name}
+                formation={selectedFormation}
+                players={selectedClub.players.slice(0, 6).map(player => ({
+                  name: player.name,
+                  number: player.number,
+                  role: player.role,
+                }))}
+              />
             </div>
+          )}
+        </div>
+
+        <div className="mt-2.5 sm:mt-3">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/50">Choose Stadium</div>
+          <div className="mt-1 flex flex-wrap gap-1.5 sm:gap-2">
+            {stadiums.map(stadium => (
+              <button
+                key={stadium.key}
+                onClick={() => onSelectStadium(stadium.key)}
+                className={`rounded-full px-3 py-1 sm:px-4 sm:py-1.5 font-sport text-xs sm:text-sm transition-colors ${
+                  selectedStadium === stadium.key ? 'bg-amber-300 text-slate-950 font-bold shadow-[0_0_12px_rgba(251,191,36,0.3)]' : 'bg-white/5 text-white/80 hover:bg-white/10'
+                }`}
+              >
+                {stadium.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 px-5 py-4">
-          <div className="text-sm text-white/70">
-            {mode === GameMode.SINGLE_PLAYER
-              ? `P1: ${homeReady ? 'READY' : 'PRESS LEFT SHIFT'}`
-              : `P1 ${homeReady ? 'READY' : 'WAIT'} | P2 ${awayReady ? 'READY' : 'WAIT'}`}
+        <div className="mt-3 sm:mt-4 flex items-center justify-between gap-3 rounded-xl sm:rounded-2xl border border-white/10 bg-black/40 px-3.5 py-2 sm:px-4 sm:py-2.5">
+          <div className="text-xs sm:text-sm text-white/80 flex items-center gap-2">
+            <div className={`h-2 w-2 rounded-full ${canContinue ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <span>
+              {mode === GameMode.SINGLE_PLAYER
+                ? `P1: ${homeReady ? 'READY' : 'PRESS LEFT SHIFT OR CLICK CONTINUE'}`
+                : `P1 ${homeReady ? 'READY' : 'WAIT'} | P2 ${awayReady ? 'READY' : 'WAIT'}`}
+            </span>
           </div>
-          <button disabled={!canContinue} onClick={onContinue} className="rounded-xl bg-cyan-400 disabled:opacity-45 px-6 py-3 font-sport text-lg text-slate-950">
+          <button
+            disabled={!canContinue}
+            onClick={onContinue}
+            className="rounded-xl bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:hover:bg-cyan-400 px-6 py-2 sm:py-2.5 font-sport text-base sm:text-lg text-slate-950 font-bold transition-all shadow-[0_0_20px_rgba(34,211,238,0.35)]"
+          >
             CONTINUE
           </button>
         </div>
@@ -866,63 +866,63 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
   awayReady,
 }) => {
   return (
-    <div className="absolute inset-0 bg-slate-900/88 backdrop-blur-lg flex items-center justify-center z-50 text-white">
-      <div className="w-[min(92vw,980px)] glass-panel rounded-3xl border border-white/10 p-8">
-        <h2 className="text-5xl font-sport font-black text-white tracking-tight">PAUSED</h2>
-        <p className="mt-3 text-sm uppercase tracking-[0.25em] text-white/50">Continue, open tactics, substitutions, or exit match</p>
+    <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-lg flex flex-col items-center justify-start sm:justify-center z-50 text-white overflow-y-auto p-3 sm:p-6">
+      <div className="w-[min(94vw,980px)] glass-panel rounded-2xl sm:rounded-3xl border border-white/10 p-5 sm:p-8 my-auto">
+        <h2 className="text-3xl sm:text-5xl font-sport font-black text-white tracking-tight">PAUSED</h2>
+        <p className="mt-1 sm:mt-2 text-xs sm:text-sm uppercase tracking-[0.25em] text-white/50">Continue, open tactics, substitutions, or exit match</p>
 
-        <div className="mt-8 flex flex-wrap gap-4">
-          <button onClick={onContinue} className="rounded-xl bg-cyan-500 px-6 py-3 font-sport text-xl text-white hover:bg-cyan-400 transition-colors">
+        <div className="mt-5 sm:mt-6 flex flex-wrap gap-3 sm:gap-4">
+          <button onClick={onContinue} className="rounded-xl bg-cyan-500 px-5 py-2.5 sm:px-6 sm:py-3 font-sport text-lg sm:text-xl text-white hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(6,182,212,0.3)]">
             CONTINUE
           </button>
-          <button onClick={onToggleTactics} className="rounded-xl bg-white/10 px-6 py-3 font-sport text-xl text-white hover:bg-white/20 transition-colors">
+          <button onClick={onToggleTactics} className="rounded-xl bg-white/10 px-5 py-2.5 sm:px-6 sm:py-3 font-sport text-lg sm:text-xl text-white hover:bg-white/20 transition-colors">
             {showTactics ? 'CLOSE TACTICS' : 'TACTICS'}
           </button>
-          <button onClick={onToggleSquad} className="rounded-xl bg-white/10 px-6 py-3 font-sport text-xl text-white hover:bg-white/20 transition-colors">
+          <button onClick={onToggleSquad} className="rounded-xl bg-white/10 px-5 py-2.5 sm:px-6 sm:py-3 font-sport text-lg sm:text-xl text-white hover:bg-white/20 transition-colors">
             SQUAD / SUBS
           </button>
-          <button onClick={onExit} className="rounded-xl bg-rose-500/80 px-6 py-3 font-sport text-xl text-white hover:bg-rose-500 transition-colors">
+          <button onClick={onExit} className="rounded-xl bg-rose-500/80 px-5 py-2.5 sm:px-6 sm:py-3 font-sport text-lg sm:text-xl text-white hover:bg-rose-500 transition-colors">
             EXIT MATCH
           </button>
         </div>
 
         {showTactics && (
-          <div className={`mt-8 grid gap-5 ${mode === GameMode.MULTI_PLAYER ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
-            <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
-              <div className="font-sport text-2xl text-cyan-300">P1 Tactics</div>
-              <div className="mt-4 flex flex-wrap gap-3">
+          <div className={`mt-5 sm:mt-6 grid gap-4 sm:gap-5 ${mode === GameMode.MULTI_PLAYER ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
+            <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4 sm:p-5">
+              <div className="font-sport text-xl sm:text-2xl text-cyan-300">P1 Tactics</div>
+              <div className="mt-3 flex flex-wrap gap-2 sm:gap-3">
                 {FORMATIONS.map(formation => (
                   <button
                     key={formation}
                     onClick={() => onSelectFormation(Team.HOME, formation)}
-                    className={`rounded-xl px-5 py-3 font-sport transition-colors ${homeFormation === formation ? 'bg-cyan-300 text-slate-950' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                    className={`rounded-xl px-4 py-2 sm:px-5 sm:py-2.5 font-sport text-sm sm:text-base transition-colors ${homeFormation === formation ? 'bg-cyan-300 text-slate-950 font-bold' : 'bg-white/10 text-white hover:bg-white/20'}`}
                   >
                     {formation}
                   </button>
                 ))}
               </div>
-              <div className="mt-4 text-sm text-white/60">Formation changes apply instantly.</div>
+              <div className="mt-3 text-xs sm:text-sm text-white/60">Formation changes apply instantly.</div>
             </div>
 
             {mode === GameMode.MULTI_PLAYER && (
-              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-5">
-                <div className="font-sport text-2xl text-blue-300">P2 Tactics</div>
-                <div className="mt-4 flex flex-wrap gap-3">
+              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 sm:p-5">
+                <div className="font-sport text-xl sm:text-2xl text-blue-300">P2 Tactics</div>
+                <div className="mt-3 flex flex-wrap gap-2 sm:gap-3">
                   {FORMATIONS.map(formation => (
                     <button
                       key={formation}
                       onClick={() => onSelectFormation(Team.AWAY, formation)}
-                      className={`rounded-xl px-5 py-3 font-sport transition-colors ${awayFormation === formation ? 'bg-blue-300 text-slate-950' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                      className={`rounded-xl px-4 py-2 sm:px-5 sm:py-2.5 font-sport text-sm sm:text-base transition-colors ${awayFormation === formation ? 'bg-blue-300 text-slate-950 font-bold' : 'bg-white/10 text-white hover:bg-white/20'}`}
                     >
                       {formation}
                     </button>
                   ))}
                 </div>
-                <div className="mt-4 text-sm text-white/60">Formation changes apply instantly.</div>
+                <div className="mt-3 text-xs sm:text-sm text-white/60">Formation changes apply instantly.</div>
               </div>
             )}
 
-            <div className="md:col-span-2 text-sm text-white/60">
+            <div className="md:col-span-2 text-xs sm:text-sm text-white/60">
               Tactics update immediately. Press continue when you are ready.
             </div>
           </div>
@@ -934,11 +934,11 @@ export const PauseMenu: React.FC<PauseMenuProps> = ({
 
 export const HalftimeMenu: React.FC<{ title?: string; actionLabel?: string; onContinue: () => void }> = ({ title = 'HALF TIME', actionLabel = 'START NEXT PERIOD', onContinue }) => {
   return (
-    <div className="absolute inset-0 bg-slate-950/88 backdrop-blur-lg flex flex-col items-center justify-center z-50 text-white">
-      <div className="glass-panel rounded-3xl border border-white/10 px-12 py-10 text-center">
-        <h2 className="text-6xl font-sport text-cyan-300">{title}</h2>
-        <p className="mt-4 text-sm uppercase tracking-[0.35em] text-white/55">Continue match flow</p>
-        <button onClick={onContinue} className="mt-8 rounded-2xl bg-cyan-400 px-10 py-4 font-sport text-2xl text-slate-950">
+    <div className="absolute inset-0 bg-slate-950/88 backdrop-blur-lg flex flex-col items-center justify-start sm:justify-center z-50 text-white overflow-y-auto p-4">
+      <div className="glass-panel rounded-3xl border border-white/10 px-8 py-8 sm:px-12 sm:py-10 text-center my-auto max-w-lg w-full">
+        <h2 className="text-4xl sm:text-6xl font-sport text-cyan-300">{title}</h2>
+        <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.35em] text-white/55">Continue match flow</p>
+        <button onClick={onContinue} className="mt-6 sm:mt-8 rounded-2xl bg-cyan-400 px-8 py-3 sm:px-10 sm:py-4 font-sport text-xl sm:text-2xl text-slate-950 font-bold hover:bg-cyan-300 transition-colors shadow-[0_0_20px_rgba(34,211,238,0.4)]">
           {actionLabel}
         </button>
       </div>
